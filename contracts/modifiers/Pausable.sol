@@ -28,16 +28,18 @@ contract Pausable is Ownable {
 
   /**
    * @dev called by the owner to pause, triggers stopped state
+   * @return true if the operation has passed
    */
-  function pause() public onlyOwner whenNotPaused returns (bool) {
+  function pause() public onlyOwner whenNotPaused returns (bool success) {
     paused = true;
     return true;
   }
 
   /**
    * @dev called by the owner to unpause, returns to normal state
+   * @return true if the operation has passed
    */
-  function unpause() public onlyOwner whenPaused returns (bool) {
+  function unpause() public onlyOwner whenPaused returns (bool success) {
     paused = false;
     return true;
   }

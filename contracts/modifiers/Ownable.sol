@@ -27,10 +27,11 @@ contract Ownable {
   /**
    * @dev Allows the current owner to transfer control of the contract to a newOwner.
    * @param newOwner The address to transfer ownership to.
+   * @return true if the operation has passed or throws if failed
    */
-  function transferOwnership(address newOwner) public onlyOwner {
-    if (newOwner != address(0)) {
-      owner = newOwner;
-    }
+  function transferOwnership(address newOwner) public onlyOwner returns (bool success) {
+    require(newOwner != address(0));
+    owner = newOwner;
+    return true;
   }
 }
