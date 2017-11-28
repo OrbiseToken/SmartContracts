@@ -11,7 +11,7 @@ contract Pausable is Ownable {
   bool public paused = false;
 
   /**
-   * @dev modifier to allow actions only when the contract IS paused
+   * @dev modifier to allow actions only when the contract IS NOT paused
    */
   modifier whenNotPaused() {
     require(!paused);
@@ -19,7 +19,7 @@ contract Pausable is Ownable {
   }
 
   /**
-   * @dev modifier to allow actions only when the contract IS NOT paused
+   * @dev modifier to allow actions only when the contract IS paused
    */
   modifier whenPaused {
     require(paused);
@@ -30,7 +30,7 @@ contract Pausable is Ownable {
    * @dev called by the owner to pause, triggers stopped state
    * @return true if the operation has passed
    */
-  function pause() public onlyOwner whenNotPaused returns (bool success) {
+  function pause() public onlyOwner returns (bool success) {
     paused = true;
     return true;
   }
@@ -39,7 +39,7 @@ contract Pausable is Ownable {
    * @dev called by the owner to unpause, returns to normal state
    * @return true if the operation has passed
    */
-  function unpause() public onlyOwner whenPaused returns (bool success) {
+  function unpause() public onlyOwner returns (bool success) {
     paused = false;
     return true;
   }
