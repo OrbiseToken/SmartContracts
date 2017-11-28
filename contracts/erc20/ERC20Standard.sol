@@ -1,6 +1,6 @@
 pragma solidity ^0.4.18;
 
-import '../modifiers/Ownable.sol';
+import '../common/SafeMath.sol';
 
 interface DataStorage {
 function getBalance(address owner) public view returns (uint256);
@@ -14,7 +14,12 @@ function setAllowance(address owner, address spender, uint256 amount) external r
 function getTotalSupply() public view returns (uint256);
 
 function setTotalSupply(uint256 value) external returns (bool success);
+
+function getFrozenAccount(address target) public view returns (bool isFrozen, uint256 amountFrozen);
+
+function setFrozenAccount(address target, bool isFrozen) external returns (bool success, uint256 amountFrozen);
 }
 
 contract ERC20Standard {
+    using SafeMath for uint;
 }

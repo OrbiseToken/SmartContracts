@@ -4,7 +4,7 @@ import '../modifiers/FromContract.sol';
 
 contract ERC20StandardData is FromContract {
 
-    mapping(address => uint256) private balances;
+    mapping(address => uint256) internal balances;
 
     mapping(address => mapping (address => uint256)) private allowed;
 
