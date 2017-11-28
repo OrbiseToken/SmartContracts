@@ -2,36 +2,56 @@ pragma solidity ^0.4.18;
 
 /**
  * @title Ownable
- * @dev The Ownable contract has an owner address, and provides basic authorization control
- * functions, this simplifies the implementation of "user permissions".
+ * @dev The Ownable contract holds owner addresses, and provides basic authorization control
+ * functions.
  */
 contract Ownable {
-  address public owner;
+  mapping(address => bool) private owners; 
 
   /**
-   * @dev The Ownable constructor sets the original `owner` of the contract to the sender
-   * account.
+   * @dev The Ownable constructor adds the sender
+   * account to the owners mapping.
    */
   function Ownable() public {
-    owner = msg.sender;
+    owners[msg.sender] = true;
   }
 
   /**
    * @dev Throws if called by any account other than the owner.
    */
-  modifier onlyOwner() {
-    require(msg.sender == owner);
+  modifier onlyOwners() {
+    require(owners[msg.sender] == true);
     _;
   }
 
   /**
-   * @dev Allows the current owner to transfer control of the contract to a newOwner.
-   * @param newOwner The address to transfer ownership to.
-   * @return true if the operation has passed or throws if failed
+   * @dev Allows the current owners to add new owner to the contract.
+   * @param newOwner The address to grant owner rights.
+   * @return true if the operation has passed or throws if failed.
    */
-  function transferOwnership(address newOwner) public onlyOwner returns (bool success) {
+  function addOwner(address newOwner) public onlyOwners returns (bool success) {
     require(newOwner != address(0));
-    owner = newOwner;
+    owners[newOwner] = true;
     return true;
+  }
+
+    /**
+   * @dev Allows the current owners to remove an existing owner from the contract.
+   * @param owner The address to revoke owner rights.
+   * @return true if the operation has passed or throws if failed.
+   */
+  function removeOwner(address owner) public onlyOwners returns (bool success) {
+    require(owners[owner]);
+    owners[owner] = false;
+    return true;
+  }
+
+      /**
+   * @dev Allows to check if the given address has owner rights.
+   * @param owner The address to check for owner rights.
+   * @return true if the adress is owner, false if it is not.
+   */
+  function isOwner(address owner) public view returns (bool) {
+    return owners[owner];
   }
 }

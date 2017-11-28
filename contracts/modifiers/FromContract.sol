@@ -19,11 +19,11 @@ import './Ownable.sol';
   }
 
   /**
-   * @dev allows the owner of the contract to set the contract address
+   * @dev allows the owner of the contract to set the contract address.
    * @param newContractAddress The address to transfer current permission to.
-   * @return true if the operation has passed or throws if failed
+   * @return true if the operation has passed or throws if failed.
    */
-  function setContractAddress(address newContractAddress) public onlyOwner returns (bool success) {
+  function setContractAddress(address newContractAddress) public onlyOwners returns (bool success) {
       require(newContractAddress != address(0));
       contractAddress = newContractAddress;
       return true;
