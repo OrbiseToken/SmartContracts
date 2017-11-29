@@ -1,8 +1,9 @@
 pragma solidity ^0.4.18;
 
-import './extensions/PausableToken.sol';
+import './ERC20Standard.sol';
+import '../modifiers/Pausable.sol';
 
-contract ERC20Extended is PausableToken {
+contract ERC20Extended is ERC20Standard, Pausable {
     string private constant NAME = "Example Name";
 
     string private constant SYMBOL = "EX";
@@ -17,7 +18,7 @@ contract ERC20Extended is PausableToken {
 
     address private buyer;
 
-    function ERC20Extended(address dataStorageAddress, address ledgerAddress, uint256 initialSupply) PausableToken(dataStorageAddress, ledgerAddress) public {
+    function ERC20Extended(address dataStorageAddress, address ledgerAddress, uint256 initialSupply) ERC20Standard(dataStorageAddress, ledgerAddress) public {
         uint256 calculatedTotalSupply = initialSupply * 10 ** uint256(DECIMALS);
         require(dataStorage.setTotalSupply(calculatedTotalSupply));
         require(dataStorage.setBalance(msg.sender, calculatedTotalSupply));
@@ -84,4 +85,16 @@ contract ERC20Extended is PausableToken {
         require(_transfer(msg.sender, buyer, amount));
         msg.sender.transfer(toBeTransferred);
     }
+
+    function transfer(address _to, uint256 _value) public whenNotPaused returns (bool success) {
+    return super.transfer(_to, _value);
+  }
+
+    function transferFrom(address _from, address _to, uint256 _value) public whenNotPaused returns (bool success) {
+    return super.transferFrom(_from, _to, _value);
+  }
+
+    function approve(address _spender, uint256 _value) public whenNotPaused returns (bool success) {
+    return super.approve(_spender, _value);
+  }
 }
