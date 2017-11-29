@@ -44,7 +44,7 @@ contract ERC20Standard {
         return dataStorage.getBalance(_owner);
     }
 
-    function _transfer(address _from, address _to, uint256 _value) private returns (bool success) {
+    function _transfer(address _from, address _to, uint256 _value) internal returns (bool success) {
         require(_to != address(0));
         uint256 fromBalance = dataStorage.getBalance(_from);
         require(fromBalance >= _value);
