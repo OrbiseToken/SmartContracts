@@ -87,14 +87,47 @@ contract ERC20Extended is ERC20Standard, Pausable {
     }
 
     function transfer(address _to, uint256 _value) public whenNotPaused returns (bool success) {
-    return super.transfer(_to, _value);
-  }
+        return super.transfer(_to, _value);
+    }
 
     function transferFrom(address _from, address _to, uint256 _value) public whenNotPaused returns (bool success) {
-    return super.transferFrom(_from, _to, _value);
-  }
+        return super.transferFrom(_from, _to, _value);
+    }
 
     function approve(address _spender, uint256 _value) public whenNotPaused returns (bool success) {
-    return super.approve(_spender, _value);
-  }
+        return super.approve(_spender, _value);
+    }
+
+    function _transfer(address _from, address _to, uint256 _value) internal returns (bool success) {
+        bool isFromFrozen;
+        (isFromFrozen, _) = dataStorage.getFrozenAccount(_from);
+        require(!isFromFrozen);
+
+        bool isToFrozen;
+        (isToFrozen, _) = dataStorage.getFrozenAccount(_from);
+        require(!isToFrozen);
+        
+        return super._transfer(_from, _to, _value);
+    }
+
+    function freezeAccount(address target) public onlyOwners returns (bool success, uint256 amount) {
+        require(target != address(0));
+        (success, amount) = dataStorage.setFrozenAccount(target, true);
+        require(success);
+        FrozenFunds(target, amount);
+    }
+
+    function unfreezeAccount(address target) public onlyOwners returns (bool success, uint256 amount) {
+        require(target != address(0));
+        (success, amount) = dataStorage.setFrozenAccount(target, false);
+        require(success);
+        UnfrozenFunds(target, amount);
+    }
+
+    function isAccountFrozen(address target) public view returns (bool isFrozen, uint256 amount) {
+        return dataStorage.getFrozenAccount(target);
+    }
+
+  event FrozenFunds(address indexed target, uint256 amount);
+  event UnfrozenFunds(address indexed target, uint256 amount);
 }
