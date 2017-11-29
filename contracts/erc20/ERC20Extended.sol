@@ -1,8 +1,8 @@
 pragma solidity ^0.4.18;
 
-import './ERC20Standard.sol';
+import './extensions/PausableToken.sol';
 
-contract ERC20Extended is ERC20Standard {
+contract ERC20Extended is PausableToken {
     string private constant NAME = "Example Name";
 
     string private constant SYMBOL = "EX";
@@ -17,7 +17,7 @@ contract ERC20Extended is ERC20Standard {
 
     address private buyer;
 
-    function ERC20Extended(address dataStorageAddress, address ledgerAddress, uint256 initialSupply) ERC20Standard(dataStorageAddress, ledgerAddress) public {
+    function ERC20Extended(address dataStorageAddress, address ledgerAddress, uint256 initialSupply) PausableToken(dataStorageAddress, ledgerAddress) public {
         uint256 calculatedTotalSupply = initialSupply * 10 ** uint256(DECIMALS);
         require(dataStorage.setTotalSupply(calculatedTotalSupply));
         require(dataStorage.setBalance(msg.sender, calculatedTotalSupply));
@@ -39,7 +39,7 @@ contract ERC20Extended is ERC20Standard {
         return sellPrice;
     }
 
-    function setSellPrice(uint256 price) public /*onlyOwners*/ returns (bool success) {
+    function setSellPrice(uint256 price) public onlyOwners returns (bool success) {
         sellPrice = price;
         return true;
     }
@@ -48,7 +48,7 @@ contract ERC20Extended is ERC20Standard {
         return buyPrice;
     }
 
-    function setBuyPrice(uint256 price) public /*onlyOwners*/ returns (bool success) {
+    function setBuyPrice(uint256 price) public onlyOwners returns (bool success) {
         buyPrice = price;
         return true;
     }
@@ -57,7 +57,7 @@ contract ERC20Extended is ERC20Standard {
         return seller;
     }
 
-    function setSeller(address sellerAddress) public /*onlyOwners*/ returns (bool success) {
+    function setSeller(address sellerAddress) public onlyOwners returns (bool success) {
         require(sellerAddress != address(0));
         seller = sellerAddress;
         return true;
@@ -67,18 +67,18 @@ contract ERC20Extended is ERC20Standard {
         return buyer;
     }
 
-    function setBuyer(address buyerAddress) public /*onlyOwners*/ returns (bool success) {
+    function setBuyer(address buyerAddress) public onlyOwners returns (bool success) {
         require(buyerAddress != address(0));
         buyer = buyerAddress;
         return true;
     }
 
-    function buy() payable /*whenNotPaused*/ public {
+    function buy() payable whenNotPaused public {
         uint256 amount = msg.value.sub(buyPrice);
         _transfer(seller, msg.sender, amount);
     }
     
-    function sell(uint256 amount) /*whenNotPaused*/ public {
+    function sell(uint256 amount) whenNotPaused public {
         uint256 toBeTransferred = amount.mul(sellPrice);
         require(buyer.balance >= toBeTransferred);
         require(_transfer(msg.sender, buyer, amount));
