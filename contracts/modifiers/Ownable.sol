@@ -38,12 +38,14 @@ contract Ownable {
     /**
    * @dev Allows the current owners to remove an existing owner from the contract.
    * @param owner The address to revoke owner rights.
-   * @return true if the operation has passed or throws if failed.
+   * @return true if the operation has passed or false if failed.
    */
   function removeOwner(address owner) public onlyOwners returns (bool success) {
-    require(owners[owner]);
-    owners[owner] = false;
-    return true;
+    if (owners[owner]) {
+      owners[owner] = false;
+      return true;
+    }
+    return false;
   }
 
       /**
