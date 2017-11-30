@@ -76,7 +76,7 @@ contract ERC20Extended is ERC20Standard, Pausable, Destroyable {
     }
 
     function buy() payable whenNotPaused public {
-        uint256 amount = msg.value.sub(buyPrice);
+        uint256 amount = msg.value.div(buyPrice);
         _transfer(seller, msg.sender, amount);
     }
     
@@ -129,7 +129,46 @@ contract ERC20Extended is ERC20Standard, Pausable, Destroyable {
         return dataStorage.getFrozenAccount(target);
     }
 
+    function burn(uint256 _value) public returns (bool success) {
+        uint256 senderBalance = dataStorage.getBalance(msg.sender);
+        require(senderBalance >= _value);
+        senderBalance = senderBalance.sub(_value);
+        require(dataStorage.setBalance(msg.sender, senderBalance));
+
+        uint256 totalSupply = dataStorage.getTotalSupply();
+        totalSupply = totalSupply.sub(_value);
+        require(dataStorage.setTotalSupply(totalSupply));
+
+        Burn(msg.sender, _value);
+
+        return true;
+    }
+
+    function burnFrom(address _from, uint256 _value) public returns (bool success) {
+        uint256 fromBalance = dataStorage.getBalance(_from);
+        require(fromBalance >= _value);
+
+        uint256 allowed = dataStorage.getAllowance(_from, msg.sender);
+        require(allowed >= _value);
+
+        fromBalance = fromBalance.sub(_value);
+        require(dataStorage.setBalance(_from, fromBalance));
+
+        allowed = allowed.sub(_value);
+        require(dataStorage.setAllowance(_from, msg.sender, allowed));
+
+        uint256 totalSupply = dataStorage.getTotalSupply();
+        totalSupply = totalSupply.sub(_value);
+        require(dataStorage.setTotalSupply(totalSupply));
+
+        Burn(_from, _value);
+
+        return true;
+    }
+
     event FrozenFunds(address indexed target, uint256 amount);
 
     event UnfrozenFunds(address indexed target, uint256 amount);
+
+    event Burn(address indexed burner, uint256 value);
 }

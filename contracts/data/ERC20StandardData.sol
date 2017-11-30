@@ -32,7 +32,7 @@ contract ERC20StandardData is FromContract {
         return totalSupply;
     }
 
-    function setTotalSupply(uint256 value) external onlyOwners fromContract returns (bool success) {
+    function setTotalSupply(uint256 value) external fromContract returns (bool success) {
         totalSupply = value;
         return true;
     }
