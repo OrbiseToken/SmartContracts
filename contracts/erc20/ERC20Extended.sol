@@ -3,9 +3,10 @@ pragma solidity ^0.4.18;
 import './extensions/FreezableToken.sol';
 import './extensions/PausableToken.sol';
 import './extensions/BurnableToken.sol';
+import './extensions/MintableToken.sol';
 import '../common/Destroyable.sol';
 
-contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Destroyable {
+contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, MintableToken, Destroyable {
     string private constant NAME = "Example Name";
 
     string private constant SYMBOL = "EX";
@@ -24,6 +25,7 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Destroya
             FreezableToken(dataStorageAddress, ledgerAddress) 
             PausableToken(dataStorageAddress, ledgerAddress) 
             BurnableToken(dataStorageAddress, ledgerAddress) 
+            MintableToken(dataStorageAddress, ledgerAddress) 
             public {
         uint256 calculatedTotalSupply = initialSupply * 10 ** uint256(DECIMALS);
         require(dataStorage.setTotalSupply(calculatedTotalSupply));
