@@ -2,8 +2,9 @@ pragma solidity ^0.4.18;
 
 import './ERC20Standard.sol';
 import '../modifiers/Pausable.sol';
+import '../common/Destroyable.sol';
 
-contract ERC20Extended is ERC20Standard, Pausable {
+contract ERC20Extended is ERC20Standard, Pausable, Destroyable {
     string private constant NAME = "Example Name";
 
     string private constant SYMBOL = "EX";
@@ -100,11 +101,11 @@ contract ERC20Extended is ERC20Standard, Pausable {
 
     function _transfer(address _from, address _to, uint256 _value) internal returns (bool success) {
         bool isFromFrozen;
-        (isFromFrozen, _) = dataStorage.getFrozenAccount(_from);
+        (isFromFrozen,) = dataStorage.getFrozenAccount(_from);
         require(!isFromFrozen);
 
         bool isToFrozen;
-        (isToFrozen, _) = dataStorage.getFrozenAccount(_from);
+        (isToFrozen,) = dataStorage.getFrozenAccount(_from);
         require(!isToFrozen);
         
         return super._transfer(_from, _to, _value);
@@ -128,6 +129,7 @@ contract ERC20Extended is ERC20Standard, Pausable {
         return dataStorage.getFrozenAccount(target);
     }
 
-  event FrozenFunds(address indexed target, uint256 amount);
-  event UnfrozenFunds(address indexed target, uint256 amount);
+    event FrozenFunds(address indexed target, uint256 amount);
+
+    event UnfrozenFunds(address indexed target, uint256 amount);
 }
