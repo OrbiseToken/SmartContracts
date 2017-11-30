@@ -1,10 +1,11 @@
 pragma solidity ^0.4.18;
 
-import './ERC20Standard.sol';
-import '../modifiers/Pausable.sol';
+import './extensions/FreezableToken.sol';
+import './extensions/PausableToken.sol';
+import './extensions/BurnableToken.sol';
 import '../common/Destroyable.sol';
 
-contract ERC20Extended is ERC20Standard, Pausable, Destroyable {
+contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Destroyable {
     string private constant NAME = "Example Name";
 
     string private constant SYMBOL = "EX";
@@ -19,7 +20,11 @@ contract ERC20Extended is ERC20Standard, Pausable, Destroyable {
 
     address private buyer;
 
-    function ERC20Extended(address dataStorageAddress, address ledgerAddress, uint256 initialSupply) ERC20Standard(dataStorageAddress, ledgerAddress) public {
+    function ERC20Extended(address dataStorageAddress, address ledgerAddress, uint256 initialSupply) 
+            FreezableToken(dataStorageAddress, ledgerAddress) 
+            PausableToken(dataStorageAddress, ledgerAddress) 
+            BurnableToken(dataStorageAddress, ledgerAddress) 
+            public {
         uint256 calculatedTotalSupply = initialSupply * 10 ** uint256(DECIMALS);
         require(dataStorage.setTotalSupply(calculatedTotalSupply));
         require(dataStorage.setBalance(msg.sender, calculatedTotalSupply));
@@ -86,89 +91,4 @@ contract ERC20Extended is ERC20Standard, Pausable, Destroyable {
         require(_transfer(msg.sender, buyer, amount));
         msg.sender.transfer(toBeTransferred);
     }
-
-    function transfer(address _to, uint256 _value) public whenNotPaused returns (bool success) {
-        return super.transfer(_to, _value);
-    }
-
-    function transferFrom(address _from, address _to, uint256 _value) public whenNotPaused returns (bool success) {
-        return super.transferFrom(_from, _to, _value);
-    }
-
-    function approve(address _spender, uint256 _value) public whenNotPaused returns (bool success) {
-        return super.approve(_spender, _value);
-    }
-
-    function _transfer(address _from, address _to, uint256 _value) internal returns (bool success) {
-        bool isFromFrozen;
-        (isFromFrozen,) = dataStorage.getFrozenAccount(_from);
-        require(!isFromFrozen);
-
-        bool isToFrozen;
-        (isToFrozen,) = dataStorage.getFrozenAccount(_from);
-        require(!isToFrozen);
-        
-        return super._transfer(_from, _to, _value);
-    }
-
-    function freezeAccount(address target) public onlyOwners returns (bool success, uint256 amount) {
-        require(target != address(0));
-        (success, amount) = dataStorage.setFrozenAccount(target, true);
-        require(success);
-        FrozenFunds(target, amount);
-    }
-
-    function unfreezeAccount(address target) public onlyOwners returns (bool success, uint256 amount) {
-        require(target != address(0));
-        (success, amount) = dataStorage.setFrozenAccount(target, false);
-        require(success);
-        UnfrozenFunds(target, amount);
-    }
-
-    function isAccountFrozen(address target) public view returns (bool isFrozen, uint256 amount) {
-        return dataStorage.getFrozenAccount(target);
-    }
-
-    function burn(uint256 _value) public returns (bool success) {
-        uint256 senderBalance = dataStorage.getBalance(msg.sender);
-        require(senderBalance >= _value);
-        senderBalance = senderBalance.sub(_value);
-        require(dataStorage.setBalance(msg.sender, senderBalance));
-
-        uint256 totalSupply = dataStorage.getTotalSupply();
-        totalSupply = totalSupply.sub(_value);
-        require(dataStorage.setTotalSupply(totalSupply));
-
-        Burn(msg.sender, _value);
-
-        return true;
-    }
-
-    function burnFrom(address _from, uint256 _value) public returns (bool success) {
-        uint256 fromBalance = dataStorage.getBalance(_from);
-        require(fromBalance >= _value);
-
-        uint256 allowed = dataStorage.getAllowance(_from, msg.sender);
-        require(allowed >= _value);
-
-        fromBalance = fromBalance.sub(_value);
-        require(dataStorage.setBalance(_from, fromBalance));
-
-        allowed = allowed.sub(_value);
-        require(dataStorage.setAllowance(_from, msg.sender, allowed));
-
-        uint256 totalSupply = dataStorage.getTotalSupply();
-        totalSupply = totalSupply.sub(_value);
-        require(dataStorage.setTotalSupply(totalSupply));
-
-        Burn(_from, _value);
-
-        return true;
-    }
-
-    event FrozenFunds(address indexed target, uint256 amount);
-
-    event UnfrozenFunds(address indexed target, uint256 amount);
-
-    event Burn(address indexed burner, uint256 value);
 }
