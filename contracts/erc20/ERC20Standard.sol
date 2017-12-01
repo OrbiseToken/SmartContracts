@@ -21,7 +21,7 @@ function setFrozenAccount(address _target, bool _isFrozen) external returns (boo
 }
 
 interface Ledger {
-    function receiveUnbackedTokens(uint256 value) public returns (bool success);
+    function saveTransaction(address _from, address _to, uint _tokens) public returns (bool);
 }
 
 
@@ -36,7 +36,7 @@ contract ERC20Standard {
 
     EternalDataStorage internal dataStorage;
 
-    Ledger internal ledger;
+    Ledger private ledger;
 
     /**
     * @dev Triggered when tokens are transferred.
@@ -148,6 +148,8 @@ contract ERC20Standard {
 
         require(dataStorage.setBalance(_from, fromBalance));
         require(dataStorage.setBalance(_to, toBalance));
+
+        require(ledger.saveTransaction(_from, _to, _value));
 
         Transfer(_from, _to, _value);
 
