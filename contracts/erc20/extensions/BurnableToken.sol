@@ -3,12 +3,21 @@ pragma solidity ^0.4.18;
 import '../ERC20Standard.sol';
 import '../../modifiers/Ownable.sol';
 
+/**
+ * @title BurnableToken
+ * @dev ERC20Standard token that can be irreversibly burned(destroyed).
+ */
 contract BurnableToken is ERC20Standard, Ownable {
 
-    event Burn(address indexed burner, uint256 value);
+    event Burn(address indexed _burner, uint256 _value);
     
-    function BurnableToken(address dataStorageAddress, address ledgerAddress) ERC20Standard(dataStorageAddress, ledgerAddress) public {}
+    function BurnableToken(address _dataStorageAddress, address _ledgerAddress) ERC20Standard(_dataStorageAddress, _ledgerAddress) public {}
 
+    /**
+     * @dev Remove tokens from the system irreversibly.
+     * @notice Destroy tokens from your account.
+     * @param _value The amount of tokens to burn.
+     */
     function burn(uint256 _value) public returns (bool success) {
         uint256 senderBalance = dataStorage.getBalance(msg.sender);
         require(senderBalance >= _value);
@@ -24,6 +33,11 @@ contract BurnableToken is ERC20Standard, Ownable {
         return true;
     }
 
+    /**
+     * @dev Remove specified `_value` tokens from the system irreversibly on behalf of `_from`.
+     * @param _from The address from which to burn tokens.
+     * @param _value The amount of money to burn.
+     */
     function burnFrom(address _from, uint256 _value) public returns (bool success) {
         uint256 fromBalance = dataStorage.getBalance(_from);
         require(fromBalance >= _value);

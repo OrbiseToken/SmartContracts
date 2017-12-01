@@ -6,6 +6,10 @@ import './extensions/BurnableToken.sol';
 import './extensions/MintableToken.sol';
 import '../common/Destroyable.sol';
 
+/**
+ * @title ERC20Extended
+ * @dev Standard ERC20 token with extended functionalities.
+ */
 contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, MintableToken, Destroyable {
     string private constant NAME = "Example Name";
 
@@ -21,76 +25,143 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
 
     address private buyer;
 
-    function ERC20Extended(address dataStorageAddress, address ledgerAddress, uint256 initialSupply) 
-            FreezableToken(dataStorageAddress, ledgerAddress) 
-            PausableToken(dataStorageAddress, ledgerAddress) 
-            BurnableToken(dataStorageAddress, ledgerAddress) 
-            MintableToken(dataStorageAddress, ledgerAddress) 
-            public {
-        uint256 calculatedTotalSupply = initialSupply * 10 ** uint256(DECIMALS);
+    /**
+    * @dev Constructor function that calculates the total supply of tokens, 
+    * sets the initial sell and buy prices and
+    * passes arguments to base constructors.
+    * @param _dataStorageAddress Address of the Data Storage Contract.
+    * @param _ledgerAddress Address of the Data Storage Contract.
+    * @param _initialSupply Sets the initial amount of tokens.
+    * @param _initialSellPrice Sets the initial sell price of the token.
+    * @param _initialBuyPrice Sets the initial buy price of the token.
+    */
+    function ERC20Extended(address _dataStorageAddress, address _ledgerAddress, uint256 _initialSupply, uint256 _initialSellPrice, uint256 _initialBuyPrice) 
+        FreezableToken(_dataStorageAddress, _ledgerAddress) 
+        PausableToken(_dataStorageAddress, _ledgerAddress) 
+        BurnableToken(_dataStorageAddress, _ledgerAddress) 
+        MintableToken(_dataStorageAddress, _ledgerAddress) 
+        public {
+        uint256 calculatedTotalSupply = _initialSupply * 10 ** uint256(DECIMALS);
         require(dataStorage.setTotalSupply(calculatedTotalSupply));
         require(dataStorage.setBalance(msg.sender, calculatedTotalSupply));
+        sellPrice = _initialSellPrice;
+        buyPrice = _initialBuyPrice;
     }
 
-    function name() public pure returns (string _name) {
+    /**
+    * @dev Function that returns the name of the token.
+    * @return The name of the token.
+    */
+    function name() public pure returns (string) {
         return NAME;
     }
 
-    function symbol() public pure returns (string _symbol) {
+    /**
+    * @dev Function that returns the symbol of the token.
+    * @return The symbol of the token.
+    */
+    function symbol() public pure returns (string) {
         return SYMBOL;
     }
 
-    function decimals() public pure returns (uint8 _decimals) {
+    /**
+    * @dev Function that returns the number of decimals of the token.
+    * @return The number of decimals of the token.
+    */
+    function decimals() public pure returns (uint8) {
         return DECIMALS;
     }
 
+    /**
+    * @dev Function that gets the sell price of the token.
+    * @return The sell price of the token.
+    */
     function getSellPrice() public view returns (uint256) {
         return sellPrice;
     }
 
-    function setSellPrice(uint256 price) public onlyOwners returns (bool success) {
-        sellPrice = price;
+    /**
+    * @dev Function that sets the sell price of the token.
+    * @param _price The price which should be set.
+    * @return success True on operation completion.
+    */
+    function setSellPrice(uint256 _price) public onlyOwners returns (bool success) {
+        sellPrice = _price;
         return true;
     }
 
+    /**
+    * @dev Function that gets the buy price of the token.
+    * @return The buy price of the token.
+    */
     function getBuyPrice() public view returns (uint256) {
         return buyPrice;
     }
 
-    function setBuyPrice(uint256 price) public onlyOwners returns (bool success) {
-        buyPrice = price;
+    /**
+    * @dev Function that sets the buy price of the token.
+    * @param _price The price which should be set.
+    * @return success True on operation completion.
+    */
+    function setBuyPrice(uint256 _price) public onlyOwners returns (bool success) {
+        buyPrice = _price;
         return true;
     }
 
+    /**
+    * @dev Function that gets the current token seller.
+    * @return Address of the seller.
+    */
     function getSeller() public view returns (address) {
         return seller;
     }
 
-    function setSeller(address sellerAddress) public onlyOwners returns (bool success) {
-        require(sellerAddress != address(0));
-        seller = sellerAddress;
+    /**
+    * @dev Function that sets the current token seller.
+    * @param _sellerAddress The address of the token seller.
+    * @return success True on operation completion, or throws.
+    */
+    function setSeller(address _sellerAddress) public onlyOwners returns (bool success) {
+        require(_sellerAddress != address(0));
+        seller = _sellerAddress;
         return true;
     }
 
+    /**
+    * @dev Function that gets the current token buyer.
+    * @return Address of the buyer.
+    */
     function getBuyer() public view returns (address) {
         return buyer;
     }
 
-    function setBuyer(address buyerAddress) public onlyOwners returns (bool success) {
-        require(buyerAddress != address(0));
-        buyer = buyerAddress;
+    /**
+    * @dev Function that sets the current token buyer.
+    * @param _buyerAddress The address of the token buyer.
+    * @return success True on operation completion, or throws.
+    */
+    function setBuyer(address _buyerAddress) public onlyOwners returns (bool success) {
+        require(_buyerAddress != address(0));
+        buyer = _buyerAddress;
         return true;
     }
 
+    /**
+    * @dev Send Ether to buy tokens at the current token buy price.
+    */
     function buy() payable whenNotPaused public {
         uint256 amount = msg.value.div(buyPrice);
         _transfer(seller, msg.sender, amount);
     }
     
-    function sell(uint256 amount) whenNotPaused public {
-        uint256 toBeTransferred = amount.mul(sellPrice);
+    /**
+    * @dev Sell `_amount` tokens at the current sell price.
+    * @param _amount The amount to sell.
+    */
+    function sell(uint256 _amount) whenNotPaused public {
+        uint256 toBeTransferred = _amount.mul(sellPrice);
         require(buyer.balance >= toBeTransferred);
-        require(_transfer(msg.sender, buyer, amount));
+        require(_transfer(msg.sender, buyer, _amount));
         msg.sender.transfer(toBeTransferred);
     }
 }
