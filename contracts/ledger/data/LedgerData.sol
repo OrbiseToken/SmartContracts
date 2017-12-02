@@ -1,8 +1,11 @@
 pragma solidity ^0.4.18;
 
 import '../../modifiers/FromContract.sol';
+import '../../common/SafeMath.sol';
 
 contract LedgerData is FromContract {
+
+    using SafeMath for uint256;
 
     struct Transaction {
         uint id;
@@ -24,6 +27,9 @@ contract LedgerData is FromContract {
         transaction.from = _from;
         transaction.to = _to;
         transaction.tokens = _tokens;
+        uint currentTransactionsLength = getTransactionsLength();
+        currentTransactionsLength = currentTransactionsLength.add(1);
+        setTransactionsLength(currentTransactionsLength);
         return true;
     }
 
@@ -31,7 +37,7 @@ contract LedgerData is FromContract {
         return transactionsLength;
     }
 
-    function setTransactionsLength(uint _value) external fromContract returns (bool) {
+    function setTransactionsLength(uint _value) internal fromContract returns (bool) {
         transactionsLength = _value;
         return true;
     }
