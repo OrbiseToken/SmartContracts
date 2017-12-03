@@ -21,15 +21,13 @@ contract LedgerData is FromContract {
         return (transactions[_index].id, transactions[_index].from, transactions[_index].to, transactions[_index].tokens);
     }
 
-    function setTransaction(address _from, address _to, uint _tokens) external fromContract returns (bool) {
+    function addTransaction(address _from, address _to, uint _tokens) external fromContract returns (bool) {
         var transaction = transactions[transactionsLength];
         transaction.id = transactionsLength;
         transaction.from = _from;
         transaction.to = _to;
         transaction.tokens = _tokens;
-        uint currentTransactionsLength = getTransactionsLength();
-        currentTransactionsLength = currentTransactionsLength.add(1);
-        setTransactionsLength(currentTransactionsLength);
+        setTransactionsLength(transactionsLength.add(1));
         return true;
     }
 

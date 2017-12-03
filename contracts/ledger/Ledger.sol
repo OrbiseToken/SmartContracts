@@ -1,18 +1,16 @@
 pragma solidity ^0.4.18;
 
 import '../modifiers/Ownable.sol';
-import '../common/SafeMath.sol';
-// import '../ledger/data/LedgerData.sol';
+import '../ledger/data/LedgerData.sol';
 
 interface LedgerDataStorage {
     function getTransaction(uint _index) public view returns (uint, address, address, uint);
-    function setTransaction(address _from, address _to, uint _tokens) external returns (bool);
+    function addTransaction(address _from, address _to, uint _tokens) external returns (bool);
     function getTransactionsLength() public view returns (uint256);
 }
 
 contract Ledger is Ownable {
 
-    using SafeMath for uint256;
     LedgerDataStorage internal ledgerDataStorage;
 
     function Ledger (address ledgerDataStorageAddress) public {
@@ -20,7 +18,7 @@ contract Ledger is Ownable {
     }
 
     function addTransaction(address _from, address _to, uint _tokens) public onlyOwners returns (bool) {
-        ledgerDataStorage.setTransaction(_from, _to, _tokens);
+        ledgerDataStorage.addTransaction(_from, _to, _tokens);
         return true;
     }
 
