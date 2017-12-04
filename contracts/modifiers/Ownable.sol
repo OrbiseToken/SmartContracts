@@ -26,32 +26,34 @@ contract Ownable {
 
   /**
    * @dev Allows the current owners to add new owner to the contract.
-   * @param newOwner The address to grant owner rights.
-   * @return true if the operation has passed or throws if failed.
+   * @param _newOwner The address to grant owner rights.
+   * @return True if the operation has passed or throws if failed.
    */
-  function addOwner(address newOwner) public onlyOwners returns (bool success) {
-    require(newOwner != address(0));
-    owners[newOwner] = true;
+  function addOwner(address _newOwner) public onlyOwners returns (bool success) {
+    require(_newOwner != address(0));
+    owners[_newOwner] = true;
     return true;
   }
 
-    /**
+  /**
    * @dev Allows the current owners to remove an existing owner from the contract.
-   * @param owner The address to revoke owner rights.
-   * @return true if the operation has passed or throws if failed.
+   * @param _owner The address to revoke owner rights.
+   * @return True if the operation has passed or false if failed.
    */
-  function removeOwner(address owner) public onlyOwners returns (bool success) {
-    require(owners[owner]);
-    owners[owner] = false;
-    return true;
+  function removeOwner(address _owner) public onlyOwners returns (bool success) {
+    if (owners[_owner]) {
+      owners[_owner] = false;
+      return true;
+    }
+    return false;
   }
 
-      /**
+  /**
    * @dev Allows to check if the given address has owner rights.
-   * @param owner The address to check for owner rights.
-   * @return true if the adress is owner, false if it is not.
+   * @param _owner The address to check for owner rights.
+   * @return True if the adress is owner, false if it is not.
    */
-  function isOwner(address owner) public view returns (bool) {
-    return owners[owner];
+  function isOwner(address _owner) public view returns (bool) {
+    return owners[_owner];
   }
 }
