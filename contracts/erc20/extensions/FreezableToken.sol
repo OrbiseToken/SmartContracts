@@ -57,7 +57,7 @@ contract FreezableToken is ERC20Standard, Ownable {
         require(!isFromFrozen);
 
         bool isToFrozen;
-        (isToFrozen,) = dataStorage.getFrozenAccount(_from);
+        (isToFrozen,) = dataStorage.getFrozenAccount(_to);
         require(!isToFrozen);
         
         return super._transfer(_from, _to, _value);

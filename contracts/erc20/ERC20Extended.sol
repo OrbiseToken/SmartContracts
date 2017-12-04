@@ -17,13 +17,17 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
 
     uint8 private constant DECIMALS = 18;
 
+    /**
+    * @dev The price at which the token is sold.
+    */
     uint256 private sellPrice;
 
+    /**
+    * @dev the price at which the token is bought.
+    */
     uint256 private buyPrice;
 
-    address private seller;
-
-    address private buyer;
+    address private wallet;
 
     /**
     * @dev Constructor function that calculates the total supply of tokens, 
@@ -34,18 +38,26 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
     * @param _initialSupply Sets the initial amount of tokens.
     * @param _initialSellPrice Sets the initial sell price of the token.
     * @param _initialBuyPrice Sets the initial buy price of the token.
+    * @param _walletAddress Sets the address of the wallet of the contract.
     */
-    function ERC20Extended(address _dataStorageAddress, address _ledgerAddress, uint256 _initialSupply, uint256 _initialSellPrice, uint256 _initialBuyPrice) 
+    function ERC20Extended(address _dataStorageAddress,
+        address _ledgerAddress,
+        uint256 _initialSupply,
+        uint256 _initialSellPrice,
+        uint256 _initialBuyPrice,
+        address _walletAddress) 
         FreezableToken(_dataStorageAddress, _ledgerAddress) 
         PausableToken(_dataStorageAddress, _ledgerAddress) 
         BurnableToken(_dataStorageAddress, _ledgerAddress) 
         MintableToken(_dataStorageAddress, _ledgerAddress) 
         public {
-        uint256 calculatedTotalSupply = _initialSupply * 10 ** uint256(DECIMALS);
+        uint256 calculatedTotalSupply = _initialSupply * (10 ** uint256(DECIMALS));
         require(dataStorage.setTotalSupply(calculatedTotalSupply));
         require(dataStorage.setBalance(msg.sender, calculatedTotalSupply));
         sellPrice = _initialSellPrice;
         buyPrice = _initialBuyPrice;
+        wallet = _walletAddress;
+        pause();
     }
 
     /**
@@ -109,59 +121,60 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
     }
 
     /**
-    * @dev Function that gets the current token seller.
-    * @return Address of the seller.
+    * @dev Function that gets the current wallet address.
+    * @return Address of the wallet.
     */
-    function getSeller() public view returns (address) {
-        return seller;
+    function getWallet() public view returns (address) {
+        return wallet;
     }
 
     /**
-    * @dev Function that sets the current token seller.
-    * @param _sellerAddress The address of the token seller.
+    * @dev Function that sets the current wallet address.
+    * @param _walletAddress The address of wallet to be set.
     * @return success True on operation completion, or throws.
     */
-    function setSeller(address _sellerAddress) public onlyOwners returns (bool success) {
-        require(_sellerAddress != address(0));
-        seller = _sellerAddress;
+    function setWallet(address _walletAddress) public onlyOwners returns (bool success) {
+        require(_walletAddress != address(0));
+        wallet = _walletAddress;
         return true;
     }
 
     /**
-    * @dev Function that gets the current token buyer.
-    * @return Address of the buyer.
-    */
-    function getBuyer() public view returns (address) {
-        return buyer;
-    }
-
-    /**
-    * @dev Function that sets the current token buyer.
-    * @param _buyerAddress The address of the token buyer.
-    * @return success True on operation completion, or throws.
-    */
-    function setBuyer(address _buyerAddress) public onlyOwners returns (bool success) {
-        require(_buyerAddress != address(0));
-        buyer = _buyerAddress;
-        return true;
-    }
-
-    /**
-    * @dev Send Ether to buy tokens at the current token buy price.
+    * @dev Send Ether to buy tokens at the current token sell price.
+    * @notice Throws on failure.
     */
     function buy() payable whenNotPaused public {
-        uint256 amount = msg.value.div(buyPrice);
-        _transfer(seller, msg.sender, amount);
+        uint256 amount = msg.value.div(sellPrice);
+        _transfer(this, msg.sender, amount);
     }
     
     /**
-    * @dev Sell `_amount` tokens at the current sell price.
+    * @dev Sell `_amount` tokens at the current buy price.
     * @param _amount The amount to sell.
+    * @notice Throws on failure.
     */
     function sell(uint256 _amount) whenNotPaused public {
-        uint256 toBeTransferred = _amount.mul(sellPrice);
-        require(buyer.balance >= toBeTransferred);
-        require(_transfer(msg.sender, buyer, _amount));
+        uint256 toBeTransferred = _amount.mul(buyPrice);
+        require(this.balance >= toBeTransferred);
+        require(_transfer(msg.sender, this, _amount));
         msg.sender.transfer(toBeTransferred);
+    }
+
+    /**
+    * @dev Get the contract balance in WEI.
+    */
+    function getContractBalance() public view returns (uint256) {
+        return this.balance;
+    }
+
+    /**
+    * @dev Withdraw `_amount` ETH to the wallet address.
+    * @param _amount The amount to withdraw.
+    * @return success True on operation completion, or throws.
+    */
+    function withdraw(uint256 _amount) onlyOwners public returns (bool success) {
+        require(this.balance >= _amount);
+        wallet.transfer(_amount);
+        return true;
     }
 }

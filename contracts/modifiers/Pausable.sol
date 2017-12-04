@@ -34,6 +34,7 @@ contract Pausable is Ownable {
    */
   function pause() public onlyOwners returns (bool success) {
     paused = true;
+    Pause();
     return true;
   }
 
@@ -43,6 +44,7 @@ contract Pausable is Ownable {
    */
   function unpause() public onlyOwners returns (bool success) {
     paused = false;
+    Unpause();
     return true;
   }
 }

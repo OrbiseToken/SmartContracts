@@ -21,7 +21,7 @@ function setFrozenAccount(address _target, bool _isFrozen) external returns (boo
 }
 
 interface Ledger {
-    function saveTransaction(address _from, address _to, uint _tokens) public returns (bool);
+    function addTransaction(address _from, address _to, uint _tokens) public returns (bool);
 }
 
 
@@ -149,7 +149,7 @@ contract ERC20Standard {
         require(dataStorage.setBalance(_from, fromBalance));
         require(dataStorage.setBalance(_to, toBalance));
 
-        require(ledger.saveTransaction(_from, _to, _value));
+        require(ledger.addTransaction(_from, _to, _value));
 
         Transfer(_from, _to, _value);
 
