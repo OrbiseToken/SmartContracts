@@ -39,6 +39,8 @@ contract MintableToken is ERC20Standard, Ownable {
 
         Transfer(address(0), _to, _amount);
 
+        Mint(_to, _amount);
+        
         return true;
     }
 
