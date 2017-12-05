@@ -52,7 +52,6 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
         sellPrice = _initialSellPrice;
         buyPrice = _initialBuyPrice;
         wallet = _walletAddress;
-        pause();
     }
 
     /**
