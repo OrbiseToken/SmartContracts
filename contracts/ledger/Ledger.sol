@@ -2,6 +2,7 @@ pragma solidity ^0.4.18;
 
 import '../modifiers/FromContract.sol';
 import '../ledger/data/LedgerData.sol';
+import '../common/Destroyable.sol';
 
 interface LedgerDataStorage {
     function getTransaction(uint _index) public view returns (uint, address, address, uint);
@@ -9,7 +10,7 @@ interface LedgerDataStorage {
     function getTransactionsLength() public view returns (uint256);
 }
 
-contract Ledger is FromContract {
+contract Ledger is FromContract, Destroyable {
 
     LedgerDataStorage internal ledgerDataStorage;
 
@@ -42,11 +43,5 @@ contract Ledger is FromContract {
     function getTransactionsCount() public view returns (uint) {
         return ledgerDataStorage.getTransactionsLength();
     }
-
-    function destroy() public onlyOwners returns (bool) {
-        selfdestruct(msg.sender);
-        return true;
-    }
      
-
 }
