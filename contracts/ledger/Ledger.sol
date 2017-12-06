@@ -1,6 +1,6 @@
 pragma solidity ^0.4.18;
 
-import '../modifiers/Ownable.sol';
+import '../modifiers/FromContract.sol';
 import '../ledger/data/LedgerData.sol';
 
 interface LedgerDataStorage {
@@ -9,7 +9,7 @@ interface LedgerDataStorage {
     function getTransactionsLength() public view returns (uint256);
 }
 
-contract Ledger is Ownable {
+contract Ledger is FromContract {
 
     LedgerDataStorage internal ledgerDataStorage;
 
@@ -17,7 +17,7 @@ contract Ledger is Ownable {
         ledgerDataStorage = LedgerDataStorage(ledgerDataStorageAddress);
     }
 
-    function addTransaction(address _from, address _to, uint _tokens) public onlyOwners returns (bool) {
+    function addTransaction(address _from, address _to, uint _tokens) public fromContract returns (bool) {
         ledgerDataStorage.addTransaction(_from, _to, _tokens);
         return true;
     }
