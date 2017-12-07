@@ -1,7 +1,8 @@
 pragma solidity ^0.4.18;
 
-import '../modifiers/Ownable.sol';
+import '../modifiers/FromContract.sol';
 import '../ledger/data/LedgerData.sol';
+import '../common/Destroyable.sol';
 
 interface LedgerDataStorage {
     function getTransaction(uint _index) public view returns (uint, address, address, uint);
@@ -9,7 +10,7 @@ interface LedgerDataStorage {
     function getTransactionsLength() public view returns (uint256);
 }
 
-contract Ledger is Ownable {
+contract Ledger is FromContract, Destroyable {
 
     LedgerDataStorage internal ledgerDataStorage;
 
@@ -17,7 +18,7 @@ contract Ledger is Ownable {
         ledgerDataStorage = LedgerDataStorage(ledgerDataStorageAddress);
     }
 
-    function addTransaction(address _from, address _to, uint _tokens) public onlyOwners returns (bool) {
+    function addTransaction(address _from, address _to, uint _tokens) public fromContract returns (bool) {
         ledgerDataStorage.addTransaction(_from, _to, _tokens);
         return true;
     }
@@ -42,11 +43,5 @@ contract Ledger is Ownable {
     function getTransactionsCount() public view returns (uint) {
         return ledgerDataStorage.getTransactionsLength();
     }
-
-    function destroy() public onlyOwners returns (bool) {
-        selfdestruct(msg.sender);
-        return true;
-    }
      
-
 }

@@ -35,7 +35,7 @@ contract LedgerData is FromContract {
         return transactionsLength;
     }
 
-    function setTransactionsLength(uint _value) internal fromContract returns (bool) {
+    function setTransactionsLength(uint _value) internal returns (bool) {
         transactionsLength = _value;
         return true;
     }
