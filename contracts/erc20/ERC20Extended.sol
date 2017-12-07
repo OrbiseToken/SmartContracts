@@ -55,6 +55,12 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
     }
 
     /**
+    * @dev Fallback function that allows the contract
+    * to recieve Ether directly.
+    */
+    function() payable public { }
+
+    /**
     * @dev Function that returns the name of the token.
     * @return The name of the token.
     */
