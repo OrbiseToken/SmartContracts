@@ -29,17 +29,19 @@ contract MintableToken is ERC20Standard, Ownable {
     * @return True if the operation was successful, or throws.
     */
     function mint(address _to, uint256 _amount) onlyOwners canMint public returns (bool success) {
+        uint256 calculatedAmount = _amount * (10 ** 18);
+
         uint256 totalSupply = dataStorage.getTotalSupply();
-        totalSupply = totalSupply.add(_amount);
+        totalSupply = totalSupply.add(calculatedAmount);
         require(dataStorage.setTotalSupply(totalSupply));
 
         uint256 toBalance = dataStorage.getBalance(_to);
-        toBalance = toBalance.add(_amount);
+        toBalance = toBalance.add(calculatedAmount);
         require(dataStorage.setBalance(_to, toBalance));
 
-        Transfer(address(0), _to, _amount);
+        Transfer(address(0), _to, calculatedAmount);
 
-        Mint(_to, _amount);
+        Mint(_to, calculatedAmount);
         
         return true;
     }
