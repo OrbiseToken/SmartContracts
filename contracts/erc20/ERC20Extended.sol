@@ -35,14 +35,12 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
     * passes arguments to base constructors.
     * @param _dataStorageAddress Address of the Data Storage Contract.
     * @param _ledgerAddress Address of the Data Storage Contract.
-    * @param _initialSupply Sets the initial amount of tokens.
     * @param _initialSellPrice Sets the initial sell price of the token.
     * @param _initialBuyPrice Sets the initial buy price of the token.
     * @param _walletAddress Sets the address of the wallet of the contract.
     */
     function ERC20Extended(address _dataStorageAddress,
         address _ledgerAddress,
-        uint256 _initialSupply,
         uint256 _initialSellPrice,
         uint256 _initialBuyPrice,
         address _walletAddress) 
@@ -51,14 +49,16 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
         BurnableToken(_dataStorageAddress, _ledgerAddress) 
         MintableToken(_dataStorageAddress, _ledgerAddress) 
         public {
-        uint256 calculatedTotalSupply = _initialSupply * (10 ** uint256(DECIMALS));
-        require(dataStorage.setTotalSupply(calculatedTotalSupply));
-        require(dataStorage.setBalance(msg.sender, calculatedTotalSupply));
         sellPrice = _initialSellPrice;
         buyPrice = _initialBuyPrice;
         wallet = _walletAddress;
-        pause();
     }
+
+    /**
+    * @dev Fallback function that allows the contract
+    * to recieve Ether directly.
+    */
+    function() payable public { }
 
     /**
     * @dev Function that returns the name of the token.
