@@ -1,7 +1,6 @@
 pragma solidity ^0.4.18;
 
 import '../modifiers/FromContract.sol';
-import '../ledger/data/LedgerData.sol';
 import '../common/Destroyable.sol';
 
 interface LedgerDataStorage {
