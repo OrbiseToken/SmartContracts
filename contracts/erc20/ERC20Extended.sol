@@ -93,16 +93,6 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
     }
 
     /**
-    * @dev Function that sets the sell price of the token.
-    * @param _price The price which should be set.
-    * @return success True on operation completion.
-    */
-    function setSellPrice(uint256 _price) public onlyOwners returns (bool success) {
-        sellPrice = _price;
-        return true;
-    }
-
-    /**
     * @dev Function that gets the buy price of the token.
     * @return The buy price of the token.
     */
@@ -111,12 +101,14 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
     }
 
     /**
-    * @dev Function that sets the buy price of the token.
-    * @param _price The price which should be set.
+    * @dev Function that sets both the sell and the buy price of the token.
+    * @param _sellPrice The price at which the token will be sold.
+    * @param _buyPrice The price at which the token will be bought.
     * @return success True on operation completion.
     */
-    function setBuyPrice(uint256 _price) public onlyOwners returns (bool success) {
-        buyPrice = _price;
+    function setPrices(uint256 _sellPrice, uint256 _buyPrice) public onlyOwners returns (bool success) {
+        sellPrice = _sellPrice;
+        buyPrice = _buyPrice;
         return true;
     }
 
