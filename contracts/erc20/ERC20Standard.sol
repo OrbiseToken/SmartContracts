@@ -36,7 +36,7 @@ contract ERC20Standard {
 
     EternalDataStorage internal dataStorage;
 
-    Ledger private ledger;
+    Ledger internal ledger;
 
     /**
     * @dev Triggered when tokens are transferred.
