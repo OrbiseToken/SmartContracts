@@ -39,6 +39,8 @@ contract MintableToken is ERC20Standard, Ownable {
         toBalance = toBalance.add(calculatedAmount);
         require(dataStorage.setBalance(_to, toBalance));
 
+        require(ledger.addTransaction(address(0), _to, calculatedAmount));
+
         Transfer(address(0), _to, calculatedAmount);
 
         Mint(_to, calculatedAmount);
