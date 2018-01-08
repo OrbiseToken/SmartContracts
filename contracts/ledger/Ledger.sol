@@ -4,21 +4,24 @@ import '../modifiers/FromContract.sol';
 import '../common/Destroyable.sol';
 
 interface LedgerDataStorage {
-    function getTransaction(uint _index) public view returns (uint, address, address, uint);
-    function addTransaction(address _from, address _to, uint _tokens) external returns (bool);
-    function getTransactionsLength() public view returns (uint256);
+    function getTransaction(uint256 _index) public view returns (address, address, uint256);
+
+    function addTransaction(address _from, address _to, uint256 _tokens) external returns (bool success);
+
+    function transactionsLength() public view returns (uint256);
 }
 
 contract Ledger is FromContract, Destroyable {
 
-    LedgerDataStorage internal ledgerDataStorage;
+    LedgerDataStorage private ledgerDataStorage;
 
     function Ledger (address ledgerDataStorageAddress) public {
+        require(ledgerDataStorageAddress != address(0));
         ledgerDataStorage = LedgerDataStorage(ledgerDataStorageAddress);
     }
 
-    function addTransaction(address _from, address _to, uint _tokens) public fromContract returns (bool) {
-        ledgerDataStorage.addTransaction(_from, _to, _tokens);
+    function addTransaction(address _from, address _to, uint256 _tokens) public fromContract returns (bool success) {
+        require(ledgerDataStorage.addTransaction(_from, _to, _tokens));
         return true;
     }
 
@@ -35,12 +38,12 @@ contract Ledger is FromContract, Destroyable {
    * @param _index is zero based and is the index in transactions mapping.
    * @return transaction's parameters' values.
    */
-    function getTransaction(uint _index) public view returns (uint, address, address, uint) {
+    function getTransaction(uint256 _index) public view returns (address, address, uint256) {
         return ledgerDataStorage.getTransaction(_index);
     }
 
-    function getTransactionsCount() public view returns (uint) {
-        return ledgerDataStorage.getTransactionsLength();
+    function getTransactionsCount() public view returns (uint256) {
+        return ledgerDataStorage.transactionsLength();
     }
      
 }

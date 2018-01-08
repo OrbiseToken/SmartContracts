@@ -8,35 +8,25 @@ contract LedgerData is FromContract {
     using SafeMath for uint256;
 
     struct Transaction {
-        uint id;
         address from;
         address to;
-        uint tokens;
+        uint256 tokens;
     }
 
-    mapping(uint => Transaction) private transactions;
-    uint private transactionsLength = 0;
+    mapping(uint256 => Transaction) private transactions;
 
-    function getTransaction(uint _index) public view returns (uint, address, address, uint) {
-        return (transactions[_index].id, transactions[_index].from, transactions[_index].to, transactions[_index].tokens);
+    uint256 public transactionsLength = 0;
+
+    function getTransaction(uint256 _index) public view returns (address, address, uint256) {
+        return (transactions[_index].from, transactions[_index].to, transactions[_index].tokens);
     }
 
-    function addTransaction(address _from, address _to, uint _tokens) external fromContract returns (bool) {
-        var transaction = transactions[transactionsLength];
-        transaction.id = transactionsLength;
+    function addTransaction(address _from, address _to, uint256 _tokens) external fromContract returns (bool success) {
+        Transaction storage transaction = transactions[transactionsLength];
         transaction.from = _from;
         transaction.to = _to;
         transaction.tokens = _tokens;
-        setTransactionsLength(transactionsLength.add(1));
-        return true;
-    }
-
-    function getTransactionsLength() public view returns (uint) {
-        return transactionsLength;
-    }
-
-    function setTransactionsLength(uint _value) internal returns (bool) {
-        transactionsLength = _value;
+        transactionsLength = transactionsLength.add(1);
         return true;
     }
 }

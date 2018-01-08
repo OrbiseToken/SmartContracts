@@ -19,14 +19,14 @@ contract BurnableToken is ERC20Standard, Ownable {
      * @param _value The amount of tokens to burn.
      */
     function burn(uint256 _value) public returns (bool success) {
-        uint256 senderBalance = dataStorage.getBalance(msg.sender);
+        uint256 senderBalance = dataStorage.balances(msg.sender);
         require(senderBalance >= _value);
         senderBalance = senderBalance.sub(_value);
-        require(dataStorage.setBalance(msg.sender, senderBalance));
+        assert(dataStorage.setBalance(msg.sender, senderBalance));
 
-        uint256 totalSupply = dataStorage.getTotalSupply();
+        uint256 totalSupply = dataStorage.totalSupply();
         totalSupply = totalSupply.sub(_value);
-        require(dataStorage.setTotalSupply(totalSupply));
+        assert(dataStorage.setTotalSupply(totalSupply));
 
         Burn(msg.sender, _value);
 
@@ -39,21 +39,21 @@ contract BurnableToken is ERC20Standard, Ownable {
      * @param _value The amount of money to burn.
      */
     function burnFrom(address _from, uint256 _value) public returns (bool success) {
-        uint256 fromBalance = dataStorage.getBalance(_from);
+        uint256 fromBalance = dataStorage.balances(_from);
         require(fromBalance >= _value);
 
-        uint256 allowed = dataStorage.getAllowance(_from, msg.sender);
+        uint256 allowed = dataStorage.allowed(_from, msg.sender);
         require(allowed >= _value);
 
         fromBalance = fromBalance.sub(_value);
-        require(dataStorage.setBalance(_from, fromBalance));
+        assert(dataStorage.setBalance(_from, fromBalance));
 
         allowed = allowed.sub(_value);
-        require(dataStorage.setAllowance(_from, msg.sender, allowed));
+        assert(dataStorage.setAllowance(_from, msg.sender, allowed));
 
-        uint256 totalSupply = dataStorage.getTotalSupply();
+        uint256 totalSupply = dataStorage.totalSupply();
         totalSupply = totalSupply.sub(_value);
-        require(dataStorage.setTotalSupply(totalSupply));
+        assert(dataStorage.setTotalSupply(totalSupply));
 
         Burn(_from, _value);
 

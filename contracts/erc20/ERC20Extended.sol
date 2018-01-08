@@ -11,23 +11,41 @@ import '../common/Destroyable.sol';
  * @dev Standard ERC20 token with extended functionalities.
  */
 contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, MintableToken, Destroyable {
-    string private constant NAME = "Example Name";
-
-    string private constant SYMBOL = "EX";
-
-    uint8 private constant DECIMALS = 18;
+    /**
+    * @dev Auto-generated function that returns the name of the token.
+    * @return The name of the token.
+    */
+    string public constant name = "Example Name";
 
     /**
-    * @dev The price at which the token is sold.
+    * @dev Auto-generated function that returns the symbol of the token.
+    * @return The symbol of the token.
     */
-    uint256 private sellPrice;
+    string public constant symbol = "EX";
 
     /**
-    * @dev the price at which the token is bought.
+    * @dev Auto-generated function that returns the number of decimals of the token.
+    * @return The number of decimals of the token.
     */
-    uint256 private buyPrice;
+    uint8 public constant decimals = 18;
 
-    address private wallet;
+    /**
+    * @dev Auto-generated function that gets the price at which the token is sold.
+    * @return The sell price of the token.
+    */
+    uint256 public sellPrice;
+
+    /**
+    * @dev Auto-generated function that gets the price at which the token is bought.
+    * @return The buy price of the token.
+    */
+    uint256 public buyPrice;
+
+    /**
+    * @dev Auto-generated function that gets the address of the wallet of the contract.
+    * @return The address of the wallet.
+    */
+    address public wallet;
 
     /**
     * @dev Constructor function that calculates the total supply of tokens, 
@@ -61,46 +79,6 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
     function() payable public { }
 
     /**
-    * @dev Function that returns the name of the token.
-    * @return The name of the token.
-    */
-    function name() public pure returns (string) {
-        return NAME;
-    }
-
-    /**
-    * @dev Function that returns the symbol of the token.
-    * @return The symbol of the token.
-    */
-    function symbol() public pure returns (string) {
-        return SYMBOL;
-    }
-
-    /**
-    * @dev Function that returns the number of decimals of the token.
-    * @return The number of decimals of the token.
-    */
-    function decimals() public pure returns (uint8) {
-        return DECIMALS;
-    }
-
-    /**
-    * @dev Function that gets the sell price of the token.
-    * @return The sell price of the token.
-    */
-    function getSellPrice() public view returns (uint256) {
-        return sellPrice;
-    }
-
-    /**
-    * @dev Function that gets the buy price of the token.
-    * @return The buy price of the token.
-    */
-    function getBuyPrice() public view returns (uint256) {
-        return buyPrice;
-    }
-
-    /**
     * @dev Function that sets both the sell and the buy price of the token.
     * @param _sellPrice The price at which the token will be sold.
     * @param _buyPrice The price at which the token will be bought.
@@ -110,14 +88,6 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
         sellPrice = _sellPrice;
         buyPrice = _buyPrice;
         return true;
-    }
-
-    /**
-    * @dev Function that gets the current wallet address.
-    * @return Address of the wallet.
-    */
-    function getWallet() public view returns (address) {
-        return wallet;
     }
 
     /**
@@ -133,23 +103,25 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
 
     /**
     * @dev Send Ether to buy tokens at the current token sell price.
-    * @notice Throws on failure.
+    * @return success True on operation completion, or throws.
     */
-    function buy() payable whenNotPaused public {
+    function buy() payable whenNotPaused public returns (bool success) {
         uint256 amount = msg.value.div(sellPrice);
-        _transfer(this, msg.sender, amount);
+        assert(_transfer(this, msg.sender, amount));
+        return true;
     }
     
     /**
     * @dev Sell `_amount` tokens at the current buy price.
     * @param _amount The amount to sell.
-    * @notice Throws on failure.
+    * @return success True on operation completion, or throws.
     */
-    function sell(uint256 _amount) whenNotPaused public {
+    function sell(uint256 _amount) whenNotPaused public returns (bool success) {
         uint256 toBeTransferred = _amount.mul(buyPrice);
         require(this.balance >= toBeTransferred);
-        require(_transfer(msg.sender, this, _amount));
+        assert(_transfer(msg.sender, this, _amount));
         msg.sender.transfer(toBeTransferred);
+        return true;
     }
 
     /**
