@@ -3,25 +3,25 @@ pragma solidity ^0.4.18;
 import '../common/SafeMath.sol';
 
 interface EternalDataStorage {
-function getBalance(address _owner) public view returns (uint256);
+function balances(address _owner) public view returns (uint256);
 
 function setBalance(address _owner, uint256 _value) external returns (bool success);
 
-function getAllowance(address _owner, address _spender) public view returns (uint256);
+function allowed(address _owner, address _spender) public view returns (uint256);
 
 function setAllowance(address _owner, address _spender, uint256 _amount) external returns (bool success);
 
-function getTotalSupply() public view returns (uint256);
+function totalSupply() public view returns(uint256);
 
 function setTotalSupply(uint256 _value) external returns (bool success);
 
-function getFrozenAccount(address _target) public view returns (bool isFrozen, uint256 amountFrozen);
+function frozenAccounts(address _target) public view returns (bool isFrozen);
 
-function setFrozenAccount(address _target, bool _isFrozen) external returns (bool success, uint256 amountFrozen);
+function setFrozenAccount(address _target, bool _isFrozen) external returns (bool success);
 }
 
 interface Ledger {
-    function addTransaction(address _from, address _to, uint _tokens) public returns (bool);
+    function addTransaction(address _from, address _to, uint _tokens) public returns (bool success);
 }
 
 
@@ -56,6 +56,8 @@ contract ERC20Standard {
     * @param _ledgerAddress Address of the Data Storage Contract.
     */
     function ERC20Standard(address _dataStorageAddress, address _ledgerAddress) public {
+        require(_dataStorageAddress != address(0));
+        require(_ledgerAddress != address(0));
         dataStorage = EternalDataStorage(_dataStorageAddress);
         ledger = Ledger(_ledgerAddress);
     }
@@ -65,7 +67,7 @@ contract ERC20Standard {
     * @return totalSupplyAmount The total amount of tokens.
     */
     function totalSupply() public view returns (uint256 totalSupplyAmount) {
-        return dataStorage.getTotalSupply();
+        return dataStorage.totalSupply();
     }
 
     /**
@@ -73,7 +75,7 @@ contract ERC20Standard {
     * @return balance The token balance of the given address.
     */
     function balanceOf(address _owner) public view returns (uint256 balance) {
-        return dataStorage.getBalance(_owner);
+        return dataStorage.balances(_owner);
     }
 
     /**
@@ -94,11 +96,11 @@ contract ERC20Standard {
      * @return success True if the transfer was successful, or throws.
      */    
     function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {
-        uint256 allowed = dataStorage.getAllowance(_from, msg.sender);
+        uint256 allowed = dataStorage.allowed(_from, msg.sender);
         require(allowed >= _value);
 
         allowed = allowed.sub(_value);
-        require(dataStorage.setAllowance(_from, msg.sender, allowed));
+        assert(dataStorage.setAllowance(_from, msg.sender, allowed));
 
         return _transfer(_from, _to, _value);
     }
@@ -126,7 +128,7 @@ contract ERC20Standard {
     * @return A uint256 specifying the amount of tokens still available for the spender.
     */
     function allowance(address _owner, address _spender) public view returns (uint256) {
-        return dataStorage.getAllowance(_owner, _spender);
+        return dataStorage.allowed(_owner, _spender);
     }
 
     /**
@@ -138,18 +140,18 @@ contract ERC20Standard {
     */
     function _transfer(address _from, address _to, uint256 _value) internal returns (bool success) {
         require(_to != address(0));
-        uint256 fromBalance = dataStorage.getBalance(_from);
+        uint256 fromBalance = dataStorage.balances(_from);
         require(fromBalance >= _value);
 
         fromBalance = fromBalance.sub(_value);
 
-        uint256 toBalance = dataStorage.getBalance(_to);
+        uint256 toBalance = dataStorage.balances(_to);
         toBalance = toBalance.add(_value);
 
-        require(dataStorage.setBalance(_from, fromBalance));
-        require(dataStorage.setBalance(_to, toBalance));
+        assert(dataStorage.setBalance(_from, fromBalance));
+        assert(dataStorage.setBalance(_to, toBalance));
 
-        require(ledger.addTransaction(_from, _to, _value));
+        assert(ledger.addTransaction(_from, _to, _value));
 
         Transfer(_from, _to, _value);
 
