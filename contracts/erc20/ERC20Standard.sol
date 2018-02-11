@@ -39,6 +39,11 @@ contract ERC20Standard {
     Ledger internal ledger;
 
     /**
+    * @dev Constant used in buy, mint and sell calculations.
+    */
+    uint64 internal constant pow = 1000000000000000000;
+    
+    /**
     * @dev Triggered when tokens are transferred.
     * @notice MUST trigger when tokens are transferred, including zero value transfers.
     */

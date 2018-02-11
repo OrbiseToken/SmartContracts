@@ -15,13 +15,13 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
     * @dev Auto-generated function that returns the name of the token.
     * @return The name of the token.
     */
-    string public constant name = "Example Name";
+    string public constant name = "Orbis";
 
     /**
     * @dev Auto-generated function that returns the symbol of the token.
     * @return The symbol of the token.
     */
-    string public constant symbol = "EX";
+    string public constant symbol = "ORB";
 
     /**
     * @dev Auto-generated function that returns the number of decimals of the token.
@@ -106,7 +106,10 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
     * @return success True on operation completion, or throws.
     */
     function buy() payable whenNotPaused public returns (bool success) {
-        uint256 amount = msg.value.div(sellPrice);
+        uint256 amount = msg.value.mul(pow);
+
+        amount = amount.div(sellPrice);
+        
         assert(_transfer(this, msg.sender, amount));
         return true;
     }
@@ -118,8 +121,12 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
     */
     function sell(uint256 _amount) whenNotPaused public returns (bool success) {
         uint256 toBeTransferred = _amount.mul(buyPrice);
+
+        toBeTransferred = toBeTransferred.div(pow);
+
         require(this.balance >= toBeTransferred);
         assert(_transfer(msg.sender, this, _amount));
+        
         msg.sender.transfer(toBeTransferred);
         return true;
     }
