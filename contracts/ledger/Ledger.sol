@@ -35,7 +35,7 @@ contract Ledger is FromContract, Destroyable {
 
     /**
    * @dev Allows the Bot to get a transcation by index.
-   * @param _index is zero based and is the index in transactions mapping.
+   * @param _index is zero based and is the index in transactions array.
    * @return transaction's parameters' values.
    */
     function getTransaction(uint256 _index) public view returns (address, address, uint256) {
