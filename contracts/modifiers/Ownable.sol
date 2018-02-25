@@ -47,8 +47,8 @@ contract Ownable {
     */
     function removeOwner(address _owner) public onlyOwners returns (bool success) {
         if (owners[_owner]) {
-        owners[_owner] = false;
-        return true;
+            owners[_owner] = false;
+            return true;
         }
         return false;
     }

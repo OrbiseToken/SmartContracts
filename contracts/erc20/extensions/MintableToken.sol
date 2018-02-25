@@ -33,7 +33,7 @@ contract MintableToken is ERC20Standard, Ownable {
     * @return success True if the operation was successful, or throws.
     */
     function mint(address _to, uint256 _amount) onlyOwners canMint public returns (bool success) {
-        uint256 calculatedAmount = _amount.mul(pow);
+        uint256 calculatedAmount = _amount.mul(1 ether);
 
         uint256 totalSupply = dataStorage.totalSupply();
         totalSupply = totalSupply.add(calculatedAmount);
