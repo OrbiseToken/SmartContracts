@@ -106,7 +106,7 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
     * @return success True on operation completion, or throws.
     */
     function buy() payable whenNotPaused public returns (bool success) {
-        uint256 amount = msg.value.mul(pow);
+        uint256 amount = msg.value.mul(1 ether);
 
         amount = amount.div(sellPrice);
         
@@ -122,7 +122,7 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
     function sell(uint256 _amount) whenNotPaused public returns (bool success) {
         uint256 toBeTransferred = _amount.mul(buyPrice);
 
-        toBeTransferred = toBeTransferred.div(pow);
+        toBeTransferred = toBeTransferred.div(1 ether);
 
         require(this.balance >= toBeTransferred);
         assert(_transfer(msg.sender, this, _amount));
