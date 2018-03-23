@@ -148,4 +148,15 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
         wallet.transfer(_amount);
         return true;
     }
+
+    /**
+    * @dev Transfer, which is used when Orbis is bought with different currency than ETH.
+    * @param _to The address of the recipient.
+    * @param _value The amount of Orbis Tokens to transfer.
+    * @return success True if the transfer was successful, or throws.
+    */
+    function nonEtherPurchaseTransfer(address _to, uint256 _value) onlyOwners whenNotPaused public returns (bool success) {
+        return _transfer(this, _to, _value);
+    }
+    
 }

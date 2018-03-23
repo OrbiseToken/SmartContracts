@@ -10,7 +10,6 @@ var ERC20DataInstance;
 
 module.exports = (deployer) => {
     deployer.deploy(SafeMath); // one should link the library to the contract, in order to use it.
-    deployer.link(SafeMath, LedgerData);
     deployer.link(SafeMath, ERC20Extended);
     deployer.deploy(LedgerData)
         .then(async () => {
