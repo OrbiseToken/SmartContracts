@@ -1,4 +1,6 @@
-pragma solidity ^0.4.18;
+pragma solidity 0.4.21;
+
+
 
 /**
  * @title Ownable
@@ -6,50 +8,50 @@ pragma solidity ^0.4.18;
  * functions.
  */
 contract Ownable {
-    /**
-    * @dev Allows to check if the given address has owner rights.
-    * @param _owner The address to check for owner rights.
-    * @return True if the address is owner, false if it is not.
-    */
-    mapping(address => bool) public owners; 
+	/**
+	* @dev Allows to check if the given address has owner rights.
+	* @param _owner The address to check for owner rights.
+	* @return True if the address is owner, false if it is not.
+	*/
+	mapping(address => bool) public owners; 
 
-    /**
-    * @dev The Ownable constructor adds the sender
-    * account to the owners mapping.
-    */
-    function Ownable() public {
-        owners[msg.sender] = true;
-    }
+	/**
+	* @dev The Ownable constructor adds the sender
+	* account to the owners mapping.
+	*/
+	function Ownable() public {
+		owners[msg.sender] = true;
+	}
 
-    /**
-    * @dev Throws if called by any account other than the owner.
-    */
-    modifier onlyOwners() {
-        require(owners[msg.sender]);
-        _;
-    }
+	/**
+	* @dev Throws if called by any account other than the owner.
+	*/
+	modifier onlyOwners() {
+		require(owners[msg.sender]);
+		_;
+	}
 
-    /**
-    * @dev Allows the current owners to add new owner to the contract.
-    * @param _newOwner The address to grant owner rights.
-    * @return True if the operation has passed or throws if failed.
-    */
-    function addOwner(address _newOwner) public onlyOwners returns (bool success) {
-        require(_newOwner != address(0));
-        owners[_newOwner] = true;
-        return true;
-    }
+	/**
+	* @dev Allows the current owners to add new owner to the contract.
+	* @param _newOwner The address to grant owner rights.
+	* @return True if the operation has passed or throws if failed.
+	*/
+	function addOwner(address _newOwner) public onlyOwners returns (bool success) {
+		require(_newOwner != address(0));
+		owners[_newOwner] = true;
+		return true;
+	}
 
-    /**
-    * @dev Allows the current owners to remove an existing owner from the contract.
-    * @param _owner The address to revoke owner rights.
-    * @return True if the operation has passed or false if failed.
-    */
-    function removeOwner(address _owner) public onlyOwners returns (bool success) {
-        if (owners[_owner]) {
-            owners[_owner] = false;
-            return true;
-        }
-        return false;
-    }
+	/**
+	* @dev Allows the current owners to remove an existing owner from the contract.
+	* @param _owner The address to revoke owner rights.
+	* @return True if the operation has passed or false if failed.
+	*/
+	function removeOwner(address _owner) public onlyOwners returns (bool success) {
+		if (owners[_owner]) {
+			owners[_owner] = false;
+			return true;
+		}
+		return false;
+	}
 }
