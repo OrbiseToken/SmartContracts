@@ -1,6 +1,7 @@
-pragma solidity 0.4.21;
+pragma solidity 0.4.24;
 
 import '../../modifiers/FromContract.sol';
+import '../../common/SafeMath.sol';
 
 
 
@@ -29,5 +30,27 @@ contract ERC20StandardData is FromContract {
 	function setTotalSupply(uint256 _value) external fromContract returns (bool success) {
 		totalSupply = _value;
 		return true;
+	}
+
+	function increaseAllowance(address _owner,  address _spender, uint256 _increase) external fromContract returns (bool success) {
+		allowed[_owner][_spender] = _add(allowed[_owner][_spender], _increase);
+		return true;
+	}
+
+
+	function decreaseAllowance(address _owner,  address _spender, uint256 _decrease) external fromContract returns (bool success) {
+		allowed[_owner][_spender] = _sub(allowed[_owner][_spender], _decrease);
+		return true;
+	}
+
+	function _sub(uint256 _a, uint256 _b) private pure returns (uint256) {
+		assert(_b <= _a);
+		return _a - _b;
+	}
+
+	function _add(uint256 _a, uint256 _b) private pure returns (uint256) {
+		uint256 c = _a + _b;
+		assert(c >= _a);
+		return c;
 	}
 }

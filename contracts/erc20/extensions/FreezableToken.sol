@@ -1,4 +1,4 @@
-pragma solidity 0.4.21;
+pragma solidity 0.4.24;
 
 import '../ERC20Standard.sol';
 import '../../modifiers/Ownable.sol';
@@ -13,7 +13,7 @@ contract FreezableToken is ERC20Standard, Ownable {
 
 	event FrozenFunds(address indexed _target, bool _isFrozen);
 
-	function FreezableToken(address _dataStorageAddress, address _ledgerAddress) ERC20Standard(_dataStorageAddress, _ledgerAddress) public {}
+	constructor(address _dataStorageAddress, address _ledgerAddress) ERC20Standard(_dataStorageAddress, _ledgerAddress) public {}
 	
 	/**
 	 * @dev Allow or prevent target address from sending & receiving tokens.

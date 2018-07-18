@@ -1,4 +1,4 @@
-pragma solidity 0.4.21;
+pragma solidity 0.4.24;
 
 import './extensions/FreezableToken.sol';
 import './extensions/PausableToken.sol';
@@ -59,7 +59,7 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
 	* @param _initialBuyPrice Sets the initial buy price of the token.
 	* @param _walletAddress Sets the address of the wallet of the contract.
 	*/
-	function ERC20Extended(
+	constructor(
 		address _dataStorageAddress,
 		address _ledgerAddress,
 		uint256 _initialSellPrice,
@@ -163,5 +163,4 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
 	function nonEtherPurchaseTransfer(address _to, uint256 _value) onlyOwners whenNotPaused public returns (bool success) {
 		return _transfer(this, _to, _value);
 	}
-	
 }

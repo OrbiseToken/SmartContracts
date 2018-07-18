@@ -1,4 +1,4 @@
-pragma solidity 0.4.21;
+pragma solidity 0.4.24;
 
 import '../modifiers/Ownable.sol';
 
@@ -10,7 +10,7 @@ import '../modifiers/Ownable.sol';
  */
 contract Destroyable is Ownable {
 
-	function Destroyable() public payable { }
+	constructor() public payable { }
 
 	/**
 	* @dev Transfers The current balance to the message sender and terminates the contract.

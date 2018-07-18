@@ -1,4 +1,4 @@
-pragma solidity 0.4.21;
+pragma solidity 0.4.24;
 
 import './Ownable.sol';
 
@@ -19,14 +19,6 @@ contract Pausable is Ownable {
 	*/
 	modifier whenNotPaused() {
 		require(!paused);
-		_;
-	}
-
-	/**
-	* @dev Modifier to allow actions only when the contract IS paused.
-	*/
-	modifier whenPaused {
-		require(paused);
 		_;
 	}
 
