@@ -17,7 +17,7 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
 	* @dev Auto-generated function that returns the name of the token.
 	* @return The name of the token.
 	*/
-	string public constant name = 'Orbis';
+	string public constant name = 'Orbise';
 
 	/**
 	* @dev Auto-generated function that returns the symbol of the token.
@@ -155,9 +155,9 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
 	}
 
 	/**
-	* @dev Transfer, which is used when Orbis is bought with different currency than ETH.
+	* @dev Transfer, which is used when Orbise is bought with different currency than ETH.
 	* @param _to The address of the recipient.
-	* @param _value The amount of Orbis Tokens to transfer.
+	* @param _value The amount of Orbise Tokens to transfer.
 	* @return success True if the transfer was successful, or throws.
 	*/
 	function nonEtherPurchaseTransfer(address _to, uint256 _value) onlyOwners whenNotPaused public returns (bool success) {
