@@ -1,4 +1,4 @@
-pragma solidity 0.4.21;
+pragma solidity 0.4.24;
 
 import '../modifiers/FromContract.sol';
 import '../common/Destroyable.sol';
@@ -11,12 +11,11 @@ interface LedgerDataStorage {
 	function transactionsLength() external view returns (uint256);
 }
 
-
 contract Ledger is FromContract, Destroyable {
 
 	LedgerDataStorage private ledgerDataStorage;
 
-	function Ledger (address ledgerDataStorageAddress) public {
+	constructor(address ledgerDataStorageAddress) public {
 		require(ledgerDataStorageAddress != address(0));
 		ledgerDataStorage = LedgerDataStorage(ledgerDataStorageAddress);
 	}

@@ -1,4 +1,4 @@
-pragma solidity 0.4.21;
+pragma solidity 0.4.24;
 
 import '../ERC20Standard.sol';
 import '../../modifiers/Ownable.sol';
@@ -18,10 +18,10 @@ contract MintableToken is ERC20Standard, Ownable {
 	bool public mintingFinished = false;
 
 	event Mint(address indexed _to, uint256 _amount);
-
+	
 	event MintFinished();
 
-	function MintableToken(address _dataStorageAddress, address _ledgerAddress) ERC20Standard(_dataStorageAddress, _ledgerAddress) public {}
+	constructor(address _dataStorageAddress, address _ledgerAddress) ERC20Standard(_dataStorageAddress, _ledgerAddress) public {}
 	
 	modifier canMint() {
 		require(!mintingFinished);

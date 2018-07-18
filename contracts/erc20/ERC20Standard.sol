@@ -1,23 +1,27 @@
-pragma solidity 0.4.21;
+pragma solidity 0.4.24;
 
 import '../common/SafeMath.sol';
 
 interface EternalDataStorage {
-function balances(address _owner) external view returns (uint256);
+	function balances(address _owner) external view returns (uint256);
 
-function setBalance(address _owner, uint256 _value) external returns (bool success);
+	function setBalance(address _owner, uint256 _value) external returns (bool success);
 
-function allowed(address _owner, address _spender) external view returns (uint256);
+	function allowed(address _owner, address _spender) external view returns (uint256);
 
-function setAllowance(address _owner, address _spender, uint256 _amount) external returns (bool success);
+	function setAllowance(address _owner, address _spender, uint256 _amount) external returns (bool success);
 
-function totalSupply() external view returns(uint256);
+	function totalSupply() external view returns(uint256);
 
-function setTotalSupply(uint256 _value) external returns (bool success);
+	function setTotalSupply(uint256 _value) external returns (bool success);
 
-function frozenAccounts(address _target) external view returns (bool isFrozen);
+	function frozenAccounts(address _target) external view returns (bool isFrozen);
 
-function setFrozenAccount(address _target, bool _isFrozen) external returns (bool success);
+	function setFrozenAccount(address _target, bool _isFrozen) external returns (bool success);
+
+	function increaseAllowance(address _owner,  address _spender, uint256 _increase) external returns (bool success);
+
+	function decreaseAllowance(address _owner,  address _spender, uint256 _decrease) external returns (bool success);
 }
 
 interface Ledger {
@@ -39,23 +43,23 @@ contract ERC20Standard {
 	Ledger internal ledger;
 
 	/**
-	* @dev Triggered when tokens are transferred.
-	* @notice MUST trigger when tokens are transferred, including zero value transfers.
-	*/
+	 * @dev Triggered when tokens are transferred.
+	 * @notice MUST trigger when tokens are transferred, including zero value transfers.
+	 */
 	event Transfer(address indexed _from, address indexed _to, uint256 _value);
 
 	/**
-	* @dev Triggered whenever approve(address _spender, uint256 _value) is called.
-	* @notice MUST trigger on any successful call to approve(address _spender, uint256 _value).
-	*/
+	 * @dev Triggered whenever approve(address _spender, uint256 _value) is called.
+	 * @notice MUST trigger on any successful call to approve(address _spender, uint256 _value).
+	 */
 	event Approval(address indexed _owner, address indexed _spender, uint256 _value);
 
 	/**
-	* @dev Constructor function that instantiates the EternalDataStorage and Ledger contracts.
-	* @param _dataStorageAddress Address of the Data Storage Contract.
-	* @param _ledgerAddress Address of the Data Storage Contract.
-	*/
-	function ERC20Standard(address _dataStorageAddress, address _ledgerAddress) public {
+	 * @dev Constructor function that instantiates the EternalDataStorage and Ledger contracts.
+	 * @param _dataStorageAddress Address of the Data Storage Contract.
+	 * @param _ledgerAddress Address of the Data Storage Contract.
+	 */
+	constructor(address _dataStorageAddress, address _ledgerAddress) public {
 		require(_dataStorageAddress != address(0));
 		require(_ledgerAddress != address(0));
 		dataStorage = EternalDataStorage(_dataStorageAddress);
@@ -63,27 +67,27 @@ contract ERC20Standard {
 	}
 
 	/**
-	* @dev Gets the total supply of tokens.
-	* @return totalSupplyAmount The total amount of tokens.
-	*/
+	 * @dev Gets the total supply of tokens.
+	 * @return totalSupplyAmount The total amount of tokens.
+	 */
 	function totalSupply() public view returns (uint256 totalSupplyAmount) {
 		return dataStorage.totalSupply();
 	}
 
 	/**
-	* @dev Get the balance of the specified `_owner` address.
-	* @return balance The token balance of the given address.
-	*/
+	 * @dev Get the balance of the specified `_owner` address.
+	 * @return balance The token balance of the given address.
+	 */
 	function balanceOf(address _owner) public view returns (uint256 balance) {
 		return dataStorage.balances(_owner);
 	}
 
 	/**
-	* @dev Transfer token to a specified address.
-	* @param _to The address to transfer to.
-	* @param _value The amount to be transferred.
-	* @return success True if the transfer was successful, or throws.
-	*/
+	 * @dev Transfer token to a specified address.
+	 * @param _to The address to transfer to.
+	 * @param _value The amount to be transferred.
+	 * @return success True if the transfer was successful, or throws.
+	 */
 	function transfer(address _to, uint256 _value) public returns (bool success) {
 		return _transfer(msg.sender, _to, _value);
 	}
@@ -107,18 +111,55 @@ contract ERC20Standard {
 
 	/**
 	 * @dev Allows `_spender` to withdraw from your account multiple times, up to the `_value` amount.
+	 * approve will revert if allowance of _spender is 0. increaseApproval and decreaseApproval should
+	 * be used instead to avoid exploit identified here: https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20.md#approve
 	 * @notice If this function is called again it overwrites the current allowance with `_value`.
 	 * @param _spender The address authorized to spend.
 	 * @param _value The max amount they can spend.
 	 * @return success True if the operation was successful, or false.
 	 */
+	 
 	function approve(address _spender, uint256 _value) public returns (bool success) {
-		if (dataStorage.setAllowance(msg.sender, _spender, _value)) {
-			emit Approval(msg.sender, _spender, _value);
-			return true;
-		}
+		require(dataStorage.allowed(msg.sender, _spender) == 0);
+		assert(dataStorage.setAllowance(msg.sender, _spender, _value));
+		
+		emit Approval(msg.sender, _spender, _value);
+		
+		return true;
+	}
 
-		return false;
+	/**
+	 * @dev Increase the amount of tokens that an owner allowed to a spender.
+	 * This function must be called for increasing approval from a non-zero value
+	 * as using approve will revert. It has been added as a fix to the exploit mentioned
+	 * here: https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20.md#approve
+	 * @param _spender The address which will spend the funds.
+	 * @param _addedValue The amount of tokens to increase the allowance by.
+	 */
+	function increaseApproval(address _spender, uint256 _addedValue) public returns (bool success) {
+		assert(dataStorage.increaseAllowance(msg.sender, _spender, _addedValue));
+		
+		emit Approval(msg.sender, _spender, dataStorage.allowed(msg.sender, _spender));
+    	
+		return true;
+	}
+
+	/**
+	 * @dev Decrease the amount of tokens that an owner allowed to a spender.
+	 * This function must be called for decreasing approval from a non-zero value
+	 * as using approve will revert. It has been added as a fix to the exploit mentioned
+	 * here: https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20.md#approve
+	 * allowed value is better to use this function to avoid 2 calls (and wait until
+	 * the first transaction is mined)
+	 * @param _spender The address which will spend the funds.
+	 * @param _subtractedValue The amount of tokens to decrease the allowance by.
+	 */
+  	function decreaseApproval(address _spender, uint256 _subtractedValue) public returns (bool success) {		
+		assert(dataStorage.decreaseAllowance(msg.sender, _spender, _subtractedValue));
+		
+		emit Approval(msg.sender, _spender, dataStorage.allowed(msg.sender, _spender));
+		
+		return true;
 	}
 
 	/**
@@ -132,12 +173,12 @@ contract ERC20Standard {
 	}
 
 	/**
-	* @dev Internal transfer, can only be called by this contract.
-	* @param _from The address of the sender.
-	* @param _to The address of the recipient.
-	* @param _value The amount to send.
-	* @return success True if the transfer was successful, or throws.
-	*/
+	 * @dev Internal transfer, can only be called by this contract.
+	 * @param _from The address of the sender.
+	 * @param _to The address of the recipient.
+	 * @param _value The amount to send.
+	 * @return success True if the transfer was successful, or throws.
+	 */
 	function _transfer(address _from, address _to, uint256 _value) internal returns (bool success) {
 		require(_to != address(0));
 		uint256 fromBalance = dataStorage.balances(_from);

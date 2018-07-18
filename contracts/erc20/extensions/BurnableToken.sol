@@ -1,4 +1,4 @@
-pragma solidity 0.4.21;
+pragma solidity 0.4.24;
 
 import '../ERC20Standard.sol';
 import '../../modifiers/Ownable.sol';
@@ -13,7 +13,7 @@ contract BurnableToken is ERC20Standard, Ownable {
 
 	event Burn(address indexed _burner, uint256 _value);
 	
-	function BurnableToken(address _dataStorageAddress, address _ledgerAddress) ERC20Standard(_dataStorageAddress, _ledgerAddress) public {}
+	constructor(address _dataStorageAddress, address _ledgerAddress) ERC20Standard(_dataStorageAddress, _ledgerAddress) public {}
 
 	/**
 	 * @dev Remove tokens from the system irreversibly.
@@ -31,6 +31,8 @@ contract BurnableToken is ERC20Standard, Ownable {
 		assert(dataStorage.setTotalSupply(totalSupply));
 
 		emit Burn(msg.sender, _value);
+
+		emit Transfer(msg.sender, address(0), _value);
 
 		return true;
 	}
@@ -58,6 +60,8 @@ contract BurnableToken is ERC20Standard, Ownable {
 		assert(dataStorage.setTotalSupply(totalSupply));
 
 		emit Burn(_from, _value);
+
+		emit Transfer(_from, address(0), _value);
 
 		return true;
 	}

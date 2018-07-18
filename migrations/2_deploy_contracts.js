@@ -12,13 +12,13 @@ module.exports = (deployer) => {
     deployer.deploy(SafeMath); // one should link the library to the contract, in order to use it.
     deployer.link(SafeMath, ERC20Extended);
     deployer.deploy(LedgerData)
-        .then(async () => {
+        .then(async function () {
             ledgerDataInstance = await LedgerData.deployed();
             await deployer.deploy(Ledger, ledgerDataInstance.address);
             ledgerInstance = await Ledger.deployed();
         });
     deployer.deploy(ERC20ExtendedData)
-        .then(async () => {
+        .then(async function () {
             ERC20DataInstance = await ERC20ExtendedData.deployed();
             await deployer.deploy(ERC20Extended, ERC20DataInstance.address, ledgerInstance.address, 1, 1, "0x0");
         });

@@ -1,4 +1,4 @@
-pragma solidity 0.4.21;
+pragma solidity 0.4.24;
 
 
 
@@ -17,8 +17,7 @@ library SafeMath {
 	}
 
 	function div(uint256 _a, uint256 _b) internal pure returns (uint256) {
-		uint256 c = _a / _b;
-		return c;
+		return _a / _b;
 	}
 
 	function sub(uint256 _a, uint256 _b) internal pure returns (uint256) {

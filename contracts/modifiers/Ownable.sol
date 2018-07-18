@@ -1,4 +1,4 @@
-pragma solidity 0.4.21;
+pragma solidity 0.4.24;
 
 
 
@@ -19,7 +19,7 @@ contract Ownable {
 	* @dev The Ownable constructor adds the sender
 	* account to the owners mapping.
 	*/
-	function Ownable() public {
+	constructor() public {
 		owners[msg.sender] = true;
 	}
 
