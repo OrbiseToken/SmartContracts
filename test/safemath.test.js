@@ -1,4 +1,5 @@
-const testUtil = require('./utils/test.util.js')
+const testUtil = require('./utils/test.util.js');
+
 const BigNumber = web3.BigNumber;
 const SafeMathMock = artifacts.require('./utils/SafeMathMock.sol');
 
