@@ -1,22 +1,17 @@
-const testUtil = require('./utils/test.util.js');
-
 const ERC20Extended = artifacts.require('../contracts/erc20/ERC20Extended.sol');
 const ERC20ExtendedData = artifacts.require('../contracts/erc20/data/ERC20ExtendedData.sol');
 const Ledger = artifacts.require('../contracts/ledger/Ledger.sol');
-const LedgerData = artifacts.require('../contracts/ledger/data/LedgerData.sol');
 
 contract('ERC20Extended', function ([owner, anotherAccount, wallet]) {
   
     beforeEach(async function () {
         const randomAddressForWallet = 0x5aeda56215b167893e80b4fe645ba6d5bab767de;
         const tokenStorage = await ERC20ExtendedData.new({from: owner});
-        const ledgerData = await LedgerData.new({from: owner});
-        const ledger = await Ledger.new(ledgerData.address, {from: owner});
+        const ledger = await Ledger.new({from: owner});
         const price = await web3.toWei('1', 'ether');
         this.token = await ERC20Extended.new(tokenStorage.address, ledger.address, price, price, randomAddressForWallet, {from: owner});
         await tokenStorage.setContractAddress(this.token.address, {from: owner});
         await ledger.setContractAddress(this.token.address, {from: owner});
-        await ledgerData.setContractAddress(ledger.address, {from: owner});
     });
 
     it('token Should have a fallback function', async function () {
@@ -31,7 +26,7 @@ contract('ERC20Extended', function ([owner, anotherAccount, wallet]) {
             const buyPrice = 2;
             const sellPrice = 5;
 
-            const success = await this.token.setPrices(sellPrice, buyPrice, { from: owner });
+            await this.token.setPrices(sellPrice, buyPrice, { from: owner });
             
             const bp = await this.token.buyPrice();
             const sp = await this.token.sellPrice();
@@ -89,7 +84,7 @@ contract('ERC20Extended', function ([owner, anotherAccount, wallet]) {
 
     it('withdraw Should allow owners to withdraw from token contract', async function () {
         await this.token.sendTransaction({ from: anotherAccount, value: 100});
-        const bal = await this.token.getContractBalance();
+        await this.token.getContractBalance();
         await this.token.withdraw(100, { from: owner });
         const balanceAfterWithdraw = await this.token.getContractBalance();
         assert(balanceAfterWithdraw, 0);

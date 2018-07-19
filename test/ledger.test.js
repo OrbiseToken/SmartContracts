@@ -1,24 +1,18 @@
-const testUtil = require('./utils/test.util.js');
-
 const ERC20Extended = artifacts.require('../contracts/erc20/ERC20Extended.sol');
 const ERC20ExtendedData = artifacts.require('../contracts/erc20/data/ERC20ExtendedData.sol');
 const Ledger = artifacts.require('../contracts/ledger/Ledger.sol');
-const LedgerData = artifacts.require('../contracts/ledger/data/LedgerData.sol');
 
 contract('ERC20Extended_ledger', function ([owner]) {
 
     beforeEach(async function () {
 		const randomAddressForWallet = 0x5aeda56215b167893e80b4fe645ba6d5bab767de;
 		const tokenStorage = await ERC20ExtendedData.new({from: owner});
-		const ledgerData = await LedgerData.new({from: owner});
-		this.ledger = await Ledger.new(ledgerData.address, {from: owner});
+		this.ledger = await Ledger.new({from: owner});
 		const price = await web3.toWei('1', 'ether');
 		this.token = await ERC20Extended.new(tokenStorage.address, this.ledger.address, price, price, randomAddressForWallet, {from: owner});
 		await tokenStorage.setContractAddress(this.token.address, {from: owner});
 		await this.ledger.setContractAddress(this.token.address, {from: owner});
-		await ledgerData.setContractAddress(this.ledger.address, {from: owner});
 	});
-
 
     describe('ledger should allow past transactions to be accessed by index', function () {
         beforeEach(async function () {
@@ -34,7 +28,7 @@ contract('ERC20Extended_ledger', function ([owner]) {
         });
         
         it('users can get specific transaction by its index', async function () {
-            const transferTransaction = await this.ledger.getTransaction(1);
+            const transferTransaction = await this.ledger.transactions(1);
             assert.equal(this.logs[0].event, 'Transfer');
             assert.equal(this.logs[0].args._from, transferTransaction[0]);
             assert.equal(this.logs[0].args._to, transferTransaction[1]);
