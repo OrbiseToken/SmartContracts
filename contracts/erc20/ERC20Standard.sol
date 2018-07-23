@@ -28,6 +28,10 @@ interface Ledger {
 	function addTransaction(address _from, address _to, uint _tokens) external returns (bool success);
 }
 
+interface WhitelistData {
+	function kycId(address _customer) external view returns (bytes32);
+}
+
 
 /**
  * @title ERC20Standard token
@@ -42,6 +46,8 @@ contract ERC20Standard {
 
 	Ledger internal ledger;
 
+	WhitelistData internal whitelist;
+
 	/**
 	 * @dev Triggered when tokens are transferred.
 	 * @notice MUST trigger when tokens are transferred, including zero value transfers.
@@ -54,16 +60,25 @@ contract ERC20Standard {
 	 */
 	event Approval(address indexed _owner, address indexed _spender, uint256 _value);
 
+	modifier isWhitelisted(address _customer) {
+		require(whitelist.kycId(_customer) != 0x0);
+		_;
+	}
+
 	/**
-	 * @dev Constructor function that instantiates the EternalDataStorage and Ledger contracts.
-	 * @param _dataStorageAddress Address of the Data Storage Contract.
-	 * @param _ledgerAddress Address of the Data Storage Contract.
+	 * @dev Constructor function that instantiates the EternalDataStorage, Ledger and Whitelist contracts.
+	 * @param _dataStorage Address of the Data Storage Contract.
+	 * @param _ledger Address of the Ledger Contract.
+	 * @param _whitelist Address of the Whitelist Data Contract.
 	 */
-	constructor(address _dataStorageAddress, address _ledgerAddress) public {
-		require(_dataStorageAddress != address(0));
-		require(_ledgerAddress != address(0));
-		dataStorage = EternalDataStorage(_dataStorageAddress);
-		ledger = Ledger(_ledgerAddress);
+	constructor(address _dataStorage, address _ledger, address _whitelist) public {
+		require(_dataStorage != address(0));
+		require(_ledger != address(0));
+		require(_whitelist != address(0));
+
+		dataStorage = EternalDataStorage(_dataStorage);
+		ledger = Ledger(_ledger);
+		whitelist = WhitelistData(_whitelist);
 	}
 
 	/**
@@ -120,7 +135,7 @@ contract ERC20Standard {
 	 */
 	 
 	function approve(address _spender, uint256 _value) public returns (bool success) {
-		require(dataStorage.allowed(msg.sender, _spender) == 0);
+		require(_value == 0 || dataStorage.allowed(msg.sender, _spender) == 0);
 		assert(dataStorage.setAllowance(msg.sender, _spender, _value));
 		
 		emit Approval(msg.sender, _spender, _value);

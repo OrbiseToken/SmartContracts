@@ -13,7 +13,7 @@ contract BurnableToken is ERC20Standard, Ownable {
 
 	event Burn(address indexed _burner, uint256 _value);
 	
-	constructor(address _dataStorageAddress, address _ledgerAddress) ERC20Standard(_dataStorageAddress, _ledgerAddress) public {}
+	constructor(address _dataStorage, address _ledger, address _whitelist) ERC20Standard(_dataStorage, _ledger, _whitelist) public {}
 
 	/**
 	 * @dev Remove tokens from the system irreversibly.

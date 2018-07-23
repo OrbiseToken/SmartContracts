@@ -10,7 +10,7 @@ import '../../modifiers/Pausable.sol';
  * @dev ERC20Standard modified with pausable transfers.
  **/
 contract PausableToken is ERC20Standard, Pausable {
-	constructor(address _dataStorageAddress, address _ledgerAddress) ERC20Standard(_dataStorageAddress, _ledgerAddress) public {}
+	constructor(address _dataStorage, address _ledger, address _whitelist) ERC20Standard(_dataStorage, _ledger, _whitelist) public {}
 
 	function transfer(address _to, uint256 _value) public whenNotPaused returns (bool success) {
 		return super.transfer(_to, _value);
