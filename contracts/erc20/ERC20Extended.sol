@@ -53,28 +53,22 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
 	* @dev Constructor function that calculates the total supply of tokens, 
 	* sets the initial sell and buy prices and
 	* passes arguments to base constructors.
-	* @param _dataStorageAddress Address of the Data Storage Contract.
-	* @param _ledgerAddress Address of the Data Storage Contract.
-	* @param _initialSellPrice Sets the initial sell price of the token.
-	* @param _initialBuyPrice Sets the initial buy price of the token.
-	* @param _walletAddress Sets the address of the wallet of the contract.
+	* @param _dataStorage Address of the Data Storage Contract.
+	* @param _ledger Address of the Data Storage Contract.
+	* @param _whitelist Address of the Whitelist Data Contract.
 	*/
-	constructor(
-		address _dataStorageAddress,
-		address _ledgerAddress,
-		uint256 _initialSellPrice,
-		uint256 _initialBuyPrice,
-		address _walletAddress
-		) 
-		FreezableToken(_dataStorageAddress, _ledgerAddress) 
-		PausableToken(_dataStorageAddress, _ledgerAddress) 
-		BurnableToken(_dataStorageAddress, _ledgerAddress) 
-		MintableToken(_dataStorageAddress, _ledgerAddress) 
+	constructor
+	(
+		address _dataStorage,
+		address _ledger,
+		address _whitelist
+	)
+		FreezableToken(_dataStorage, _ledger, _whitelist)
+		PausableToken(_dataStorage, _ledger, _whitelist)
+		BurnableToken(_dataStorage, _ledger, _whitelist)
+		MintableToken(_dataStorage, _ledger, _whitelist)
 		public 
 	{
-		sellPrice = _initialSellPrice;
-		buyPrice = _initialBuyPrice;
-		wallet = _walletAddress;
 	}
 
 	/**
@@ -110,7 +104,7 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
 	* @dev Send Ether to buy tokens at the current token sell price.
 	* @return success True on operation completion, or throws.
 	*/
-	function buy() payable whenNotPaused public returns (bool success) {
+	function buy() payable whenNotPaused isWhitelisted(msg.sender) public returns (bool success) {
 		uint256 amount = msg.value.mul(1 ether);
 
 		amount = amount.div(sellPrice);
@@ -150,6 +144,7 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
 	*/
 	function withdraw(uint256 _amount) onlyOwners public returns (bool success) {
 		require(address(this).balance >= _amount);
+		require(wallet != address(0));
 		wallet.transfer(_amount);
 		return true;
 	}

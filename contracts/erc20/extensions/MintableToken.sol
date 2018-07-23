@@ -21,7 +21,7 @@ contract MintableToken is ERC20Standard, Ownable {
 	
 	event MintFinished();
 
-	constructor(address _dataStorageAddress, address _ledgerAddress) ERC20Standard(_dataStorageAddress, _ledgerAddress) public {}
+	constructor(address _dataStorage, address _ledger, address _whitelist) ERC20Standard(_dataStorage, _ledger, _whitelist) public {}
 	
 	modifier canMint() {
 		require(!mintingFinished);
