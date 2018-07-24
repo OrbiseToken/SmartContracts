@@ -12,12 +12,12 @@ contract WhitelistData is Ownable {
     mapping(address => bytes32) public kycId;
     
     modifier isCustomerSpecified(address _customer) {
-        require(_customer != address(0));
+        require(_customer != address(0), "Non-zero customer address required when adding new customer.");
         _;
     }
     
     modifier isIdSpecified(bytes32 _id) {
-        require(_id != 0x0);
+        require(_id != 0x0, "Non-zero customer id required when adding new customer.");
         _;
     }
     
@@ -40,7 +40,7 @@ contract WhitelistData is Ownable {
         public
         onlyOwners
     {
-        require(_customers.length == _ids.length && _customers.length <= 128);
+        require(_customers.length == _ids.length && _customers.length <= 128, "Less than or equal to 128 customers can be added at once and customer array length must be equal to id array length.");
         
         for (uint8 i = 0; i < _customers.length; i++) {
             _addCustomer(_customers[i], _ids[i]);

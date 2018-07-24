@@ -22,7 +22,7 @@ contract MintableToken is ERC20Standard, Ownable {
 	event MintFinished();
 
 	modifier canMint() {
-		require(!mintingFinished);
+		require(!mintingFinished, "Finished minting required.");
 		_;
 	}
 
@@ -37,13 +37,13 @@ contract MintableToken is ERC20Standard, Ownable {
 
 		uint256 totalSupply = dataStorage.totalSupply();
 		totalSupply = totalSupply.add(calculatedAmount);
-		require(dataStorage.setTotalSupply(totalSupply));
+		require(dataStorage.setTotalSupply(totalSupply), "Unable to set total supply.");
 
 		uint256 toBalance = dataStorage.balances(_to);
 		toBalance = toBalance.add(calculatedAmount);
-		require(dataStorage.setBalance(_to, toBalance));
+		require(dataStorage.setBalance(_to, toBalance), "Unable to set new account balance.");
 
-		require(ledger.addTransaction(address(0), _to, calculatedAmount));
+		require(ledger.addTransaction(address(0), _to, calculatedAmount), "Unable to add mint transaction.");
 
 		emit Transfer(address(0), _to, calculatedAmount);
 

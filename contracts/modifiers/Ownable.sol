@@ -27,7 +27,7 @@ contract Ownable {
 	* @dev Throws if called by any account other than the owner.
 	*/
 	modifier onlyOwners() {
-		require(owners[msg.sender]);
+		require(owners[msg.sender], "Owner message sender required.");
 		_;
 	}
 
@@ -37,7 +37,7 @@ contract Ownable {
 	* @return True if the operation has passed or throws if failed.
 	*/
 	function addOwner(address _newOwner) public onlyOwners returns (bool success) {
-		require(_newOwner != address(0));
+		require(_newOwner != address(0), "Non-zero new owner address required.");
 		owners[_newOwner] = true;
 		return true;
 	}

@@ -24,7 +24,7 @@ contract Destroyable is Ownable {
 	* @param _recipient The address to send the current balance to.
 	*/
 	function destroyAndSend(address _recipient) onlyOwners public {
-		require(_recipient != address(0));
+		require(_recipient != address(0), "Non-zero recepient address required.");
 		selfdestruct(_recipient);
 	}
 }
