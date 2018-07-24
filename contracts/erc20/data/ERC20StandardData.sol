@@ -1,9 +1,6 @@
 pragma solidity 0.4.24;
 
 import '../../modifiers/FromContract.sol';
-import '../../common/SafeMath.sol';
-
-
 
 /**
  * @title ERC20StandardData

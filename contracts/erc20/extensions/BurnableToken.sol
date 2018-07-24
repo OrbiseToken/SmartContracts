@@ -4,7 +4,6 @@ import '../ERC20Standard.sol';
 import '../../modifiers/Ownable.sol';
 
 
-
 /**
  * @title BurnableToken
  * @dev ERC20Standard token that can be irreversibly burned(destroyed).
@@ -13,8 +12,6 @@ contract BurnableToken is ERC20Standard, Ownable {
 
 	event Burn(address indexed _burner, uint256 _value);
 	
-	constructor(address _dataStorage, address _ledger, address _whitelist) ERC20Standard(_dataStorage, _ledger, _whitelist) public {}
-
 	/**
 	 * @dev Remove tokens from the system irreversibly.
 	 * @notice Destroy tokens from your account.
