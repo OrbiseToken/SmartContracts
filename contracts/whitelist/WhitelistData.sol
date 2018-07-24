@@ -9,8 +9,6 @@ contract WhitelistData is Ownable {
     event LogCustomerUpdate(address customer, bytes32 id);
 	event LogCustomerDeleted(address customer, bytes32 id);
 
-    bytes32 public constant BYTES32_DEFAULT_VALUE = 0x290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e563;
-    
     mapping(address => bytes32) public kycId;
     
     modifier isCustomerSpecified(address _customer) {
