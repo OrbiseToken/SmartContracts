@@ -6,8 +6,6 @@ import './extensions/BurnableToken.sol';
 import './extensions/MintableToken.sol';
 import '../common/Destroyable.sol';
 
-
-
 /**
  * @title ERC20Extended
  * @dev Standard ERC20 token with extended functionalities.
@@ -63,10 +61,7 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
 		address _ledger,
 		address _whitelist
 	)
-		FreezableToken(_dataStorage, _ledger, _whitelist)
-		PausableToken(_dataStorage, _ledger, _whitelist)
-		BurnableToken(_dataStorage, _ledger, _whitelist)
-		MintableToken(_dataStorage, _ledger, _whitelist)
+		ERC20Standard(_dataStorage, _ledger, _whitelist)
 		public 
 	{
 	}

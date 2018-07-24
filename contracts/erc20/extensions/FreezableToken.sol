@@ -13,8 +13,6 @@ contract FreezableToken is ERC20Standard, Ownable {
 
 	event FrozenFunds(address indexed _target, bool _isFrozen);
 
-	constructor(address _dataStorage, address _ledger, address _whitelist) ERC20Standard(_dataStorage, _ledger, _whitelist) public {}
-	
 	/**
 	 * @dev Allow or prevent target address from sending & receiving tokens.
 	 * @param _target Address to be frozen or unfrozen.
