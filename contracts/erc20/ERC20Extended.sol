@@ -90,7 +90,7 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
 	* @return success True on operation completion, or throws.
 	*/
 	function setWallet(address _walletAddress) public onlyOwners returns (bool success) {
-		require(_walletAddress != address(0));
+		require(_walletAddress != address(0), "Non-zero wallet address required.");
 		wallet = _walletAddress;
 		return true;
 	}
@@ -118,7 +118,7 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
 
 		toBeTransferred = toBeTransferred.div(1 ether);
 
-		require(address(this).balance >= toBeTransferred);
+		require(address(this).balance >= toBeTransferred, "Contract has insufficient balance.");
 		assert(_transfer(msg.sender, this, _amount));
 		
 		msg.sender.transfer(toBeTransferred);
@@ -138,8 +138,8 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
 	* @return success True on operation completion, or throws.
 	*/
 	function withdraw(uint256 _amount) onlyOwners public returns (bool success) {
-		require(address(this).balance >= _amount);
-		require(wallet != address(0));
+		require(address(this).balance >= _amount, "Unable to withdraw specified amount.");
+		require(wallet != address(0), "Non-zero wallet address required.");
 		wallet.transfer(_amount);
 		return true;
 	}

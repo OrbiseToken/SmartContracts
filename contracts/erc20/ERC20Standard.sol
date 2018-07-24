@@ -61,7 +61,7 @@ contract ERC20Standard {
 	event Approval(address indexed _owner, address indexed _spender, uint256 _value);
 
 	modifier isWhitelisted(address _customer) {
-		require(whitelist.kycId(_customer) != 0x0);
+		require(whitelist.kycId(_customer) != 0x0, "Whitelisted customer required.");
 		_;
 	}
 
@@ -72,9 +72,9 @@ contract ERC20Standard {
 	 * @param _whitelist Address of the Whitelist Data Contract.
 	 */
 	constructor(address _dataStorage, address _ledger, address _whitelist) public {
-		require(_dataStorage != address(0));
-		require(_ledger != address(0));
-		require(_whitelist != address(0));
+		require(_dataStorage != address(0), "Non-zero data storage address required.");
+		require(_ledger != address(0), "Non-zero ledger address required.");
+		require(_whitelist != address(0), "Non-zero whitelist address required.");
 
 		dataStorage = EternalDataStorage(_dataStorage);
 		ledger = Ledger(_ledger);
@@ -116,7 +116,7 @@ contract ERC20Standard {
 	 */    
 	function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {
 		uint256 allowed = dataStorage.allowed(_from, msg.sender);
-		require(allowed >= _value);
+		require(allowed >= _value, "From account has insufficient balance");
 
 		allowed = allowed.sub(_value);
 		assert(dataStorage.setAllowance(_from, msg.sender, allowed));
@@ -135,7 +135,7 @@ contract ERC20Standard {
 	 */
 	 
 	function approve(address _spender, uint256 _value) public returns (bool success) {
-		require(_value == 0 || dataStorage.allowed(msg.sender, _spender) == 0);
+		require(_value == 0 || dataStorage.allowed(msg.sender, _spender) == 0, "Approve value is required to be zero or account has already been approved.");
 		assert(dataStorage.setAllowance(msg.sender, _spender, _value));
 		
 		emit Approval(msg.sender, _spender, _value);
@@ -195,9 +195,9 @@ contract ERC20Standard {
 	 * @return success True if the transfer was successful, or throws.
 	 */
 	function _transfer(address _from, address _to, uint256 _value) internal returns (bool success) {
-		require(_to != address(0));
+		require(_to != address(0), "Non-zero to-address required.");
 		uint256 fromBalance = dataStorage.balances(_from);
-		require(fromBalance >= _value);
+		require(fromBalance >= _value, "From-address has insufficient balance.");
 
 		fromBalance = fromBalance.sub(_value);
 
