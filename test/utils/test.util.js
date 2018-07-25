@@ -53,7 +53,6 @@ const util = {
 		}
 		return event;
 	},
-
 	increaseTime: (seconds) => {
 		const id = Date.now();
 

@@ -3,15 +3,16 @@ const ERC20ExtendedData = artifacts.require('../contracts/erc20/data/ERC20Extend
 const Ledger = artifacts.require('../contracts/ledger/Ledger.sol');
 const WhitelistData = artifacts.require('../contracts/whitelist/WhitelistData.sol');
 
+const assertRevert = require('./utils/test.util.js').assertRevert;
+
 contract('ERC20Extended', function ([owner, anotherAccount, wallet]) {
 
 	beforeEach(async function () {
 		const tokenStorage = await ERC20ExtendedData.new({ from: owner });
 		const ledger = await Ledger.new({ from: owner });
-		const whitelist = await WhitelistData.new({ from: owner });
+		this.whitelist = await WhitelistData.new({ from: owner });
 		const price = await web3.toWei('1', 'ether');
-		this.token = await ERC20Extended.new(tokenStorage.address, ledger.address, whitelist.address, { from: owner });
-		await whitelist.addSingleCustomer(anotherAccount, '0xe9ce785086f5c3b748f71d481085ecfed6e8b27dde50ff827a68cda21a68abdb');
+		this.token = await ERC20Extended.new(tokenStorage.address, ledger.address, this.whitelist.address, { from: owner });
 		await this.token.setPrices(price, price, { from: owner });
 		await tokenStorage.setContractAddress(this.token.address, { from: owner });
 		await ledger.setContractAddress(this.token.address, { from: owner });
@@ -50,8 +51,15 @@ contract('ERC20Extended', function ([owner, anotherAccount, wallet]) {
 		beforeEach(async function () {
 			await this.token.unpause({ from: owner });
 			await this.token.mint(this.token.address, 1, { from: owner });
+			await this.whitelist.addSingleCustomer(anotherAccount, '0xe9ce785086f5c3b748f71d481085ecfed6e8b27dde50ff827a68cda21a68abdb');
 			const { logs } = await this.token.buy({ from: anotherAccount, value: 100 });
 			this.logs = logs;
+		});
+
+		it('buy Should revert when the invoker is not whitelisted', async function () {
+			await this.whitelist.deleteCustomer(anotherAccount);
+			const result = this.token.buy({ from: anotherAccount, value: 100 });
+			await assertRevert(result);
 		});
 
 		it('buy Should allow accounts to give ether in exchange for tokens', async function () {
@@ -83,6 +91,12 @@ contract('ERC20Extended', function ([owner, anotherAccount, wallet]) {
 			assert.equal(logs[0].args._to, this.token.address);
 			assert.equal(logs[0].args._value, 100);
 		});
+	});
+
+	it('withdraw Should revert when the wallet is not set', async function () {
+		await this.token.sendTransaction({ from: anotherAccount, value: 100 });
+		const result = this.token.withdraw(100, { from: owner });
+		await assertRevert(result);
 	});
 
 	it('withdraw Should allow owners to withdraw from token contract', async function () {
