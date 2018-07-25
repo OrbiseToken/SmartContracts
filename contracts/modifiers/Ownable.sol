@@ -13,8 +13,8 @@ contract Ownable {
 	* @param _owner The address to check for owner rights.
 	* @return True if the address is owner, false if it is not.
 	*/
-	mapping(address => bool) public owners; 
-
+	mapping(address => bool) public owners;
+	
 	/**
 	* @dev The Ownable constructor adds the sender
 	* account to the owners mapping.
@@ -32,26 +32,15 @@ contract Ownable {
 	}
 
 	/**
-	* @dev Allows the current owners to add new owner to the contract.
-	* @param _newOwner The address to grant owner rights.
+	* @dev Allows the current owners to grant or revoke 
+	* owner-level access rights to the contract.
+	* @param _owner The address to grant or revoke owner rights.
+	* @param _isAllowed Boolean granting or revoking owner rights.
 	* @return True if the operation has passed or throws if failed.
 	*/
-	function addOwner(address _newOwner) public onlyOwners returns (bool success) {
-		require(_newOwner != address(0), "Non-zero new owner address required.");
-		owners[_newOwner] = true;
+	function setOwner(address _owner, bool _isAllowed) public onlyOwners returns (bool success) {
+		require(_owner != address(0), "Non-zero owner-address required.");
+		owners[_owner] = _isAllowed;
 		return true;
-	}
-
-	/**
-	* @dev Allows the current owners to remove an existing owner from the contract.
-	* @param _owner The address to revoke owner rights.
-	* @return True if the operation has passed or false if failed.
-	*/
-	function removeOwner(address _owner) public onlyOwners returns (bool success) {
-		if (owners[_owner]) {
-			owners[_owner] = false;
-			return true;
-		}
-		return false;
 	}
 }
