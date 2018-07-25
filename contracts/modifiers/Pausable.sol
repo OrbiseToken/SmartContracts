@@ -1,6 +1,6 @@
 pragma solidity 0.4.24;
 
-import './Ownable.sol';
+import './BotOperated.sol';
 
 
 
@@ -8,7 +8,7 @@ import './Ownable.sol';
 * @title Pausable
 * @dev Base contract which allows children to implement an emergency stop mechanism.
 */
-contract Pausable is Ownable {
+contract Pausable is BotOperated {
 	event Pause();
 	event Unpause();
 
@@ -26,7 +26,7 @@ contract Pausable is Ownable {
 	* @dev Called by the owner to pause, triggers stopped state.
 	* @return True if the operation has passed.
 	*/
-	function pause() public onlyOwners returns (bool success) {
+	function pause() public onlyBotsOrOwners returns (bool success) {
 		paused = true;
 		emit Pause();
 		return true;
@@ -36,7 +36,7 @@ contract Pausable is Ownable {
 	* @dev Called by the owner to unpause, returns to normal state.
 	* @return True if the operation has passed.
 	*/
-	function unpause() public onlyOwners returns (bool success) {
+	function unpause() public onlyBotsOrOwners returns (bool success) {
 		paused = false;
 		emit Unpause();
 		return true;

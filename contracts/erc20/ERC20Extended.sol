@@ -78,7 +78,7 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
 	* @param _buyPrice The price at which the token will be bought.
 	* @return success True on operation completion.
 	*/
-	function setPrices(uint256 _sellPrice, uint256 _buyPrice) public onlyOwners returns (bool success) {
+	function setPrices(uint256 _sellPrice, uint256 _buyPrice) public onlyBotsOrOwners returns (bool success) {
 		sellPrice = _sellPrice;
 		buyPrice = _buyPrice;
 		return true;
@@ -150,7 +150,7 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
 	* @param _value The amount of Orbise Tokens to transfer.
 	* @return success True if the transfer was successful, or throws.
 	*/
-	function nonEtherPurchaseTransfer(address _to, uint256 _value) onlyOwners whenNotPaused public returns (bool success) {
-		return _transfer(this, _to, _value);
+	function nonEtherPurchaseTransfer(address _to, uint256 _value) onlyBots whenNotPaused public returns (bool success) {
+		return _transfer(msg.sender, _to, _value);
 	}
 }

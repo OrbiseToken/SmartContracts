@@ -1,14 +1,13 @@
 pragma solidity 0.4.24;
 
 import '../ERC20Standard.sol';
-import '../../modifiers/Ownable.sol';
 
 
 /**
  * @title BurnableToken
  * @dev ERC20Standard token that can be irreversibly burned(destroyed).
  */
-contract BurnableToken is ERC20Standard, Ownable {
+contract BurnableToken is ERC20Standard {
 
 	event Burn(address indexed _burner, uint256 _value);
 	

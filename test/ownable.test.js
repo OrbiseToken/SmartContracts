@@ -19,27 +19,29 @@ contract('ERC20Extended_ownable', function ([owner, anotherAccount, otherAccount
 	});
 
 	it('Ownable contract Should only allow owners to access onlyOwners functions', async function () {
-		await testUtil.assertRevert(this.token.addOwner(otherAccount, { from: anotherAccount }));
+		await testUtil.assertRevert(this.token.setOwner(otherAccount, true, { from: anotherAccount }));
 	});
 
 	describe('Ownable contract should allow multiple owners', function () {
-		it('addOwner Should allow owners to add more owners', async function () {
-			await this.token.addOwner(anotherAccount, { from: owner });
+		it('setOwner Should allow owners to add more owners', async function () {
+			await this.token.setOwner(anotherAccount, true, { from: owner });
 			const isOwner = await this.token.owners(anotherAccount);
 			assert.equal(isOwner, true);
 		});
 
-		it('removeOwner Should allow owners to remove existing owners', async function () {
-			await this.token.addOwner(anotherAccount, { from: owner });
-			await this.token.removeOwner(anotherAccount, { from: owner });
-			const isOwner = await this.token.owners(anotherAccount);
+		it('setOwner Should allow owners to remove existing owners', async function () {
+			await this.token.setOwner(anotherAccount, true, { from: owner });
+			let isOwner = await this.token.owners(anotherAccount);
+			assert.equal(isOwner, true);
+			await this.token.setOwner(anotherAccount, false, { from: owner });
+			isOwner = await this.token.owners(anotherAccount);
 			assert.equal(isOwner, false);
 		});
 
-		it('removeOwner Should return false when attempting to remove non owner', async function () {
-			const removal = await this.token.removeOwner.call(anotherAccount, { from: owner });
+		it('setOwner Should return true when called from owner', async function () {
+			const result = await this.token.setOwner.call(anotherAccount, true, { from: owner });
 
-			assert.equal(removal, false);
+			assert.equal(result, true);
 		});
 	});
 });

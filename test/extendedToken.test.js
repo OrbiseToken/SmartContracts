@@ -5,8 +5,7 @@ const WhitelistData = artifacts.require('../contracts/whitelist/WhitelistData.so
 
 const assertRevert = require('./utils/test.util.js').assertRevert;
 
-contract('ERC20Extended', function ([owner, anotherAccount, wallet]) {
-
+contract('ERC20Extended', function ([owner, anotherAccount, wallet, bot]) {
 	beforeEach(async function () {
 		const tokenStorage = await ERC20ExtendedData.new({ from: owner });
 		const ledger = await Ledger.new({ from: owner });
@@ -110,8 +109,9 @@ contract('ERC20Extended', function ([owner, anotherAccount, wallet]) {
 
 	it('nonEtherPurchaseTransfer Should allow owners to transfer tokens to specified account without ether', async function () {
 		await this.token.unpause({ from: owner });
-		await this.token.mint(this.token.address, 1, { from: owner });
-		await this.token.nonEtherPurchaseTransfer(anotherAccount, 100, { from: owner });
+		await this.token.mint(bot, 100, { from: owner });
+		await this.token.setBot(bot, true, { from: owner });
+		await this.token.nonEtherPurchaseTransfer(anotherAccount, 100, { from: bot });
 		const anotherBalance = await this.token.balanceOf(anotherAccount);
 
 		assert.equal(anotherBalance, 100);

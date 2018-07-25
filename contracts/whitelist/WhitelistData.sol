@@ -1,9 +1,9 @@
 pragma solidity 0.4.24;
 
-import '../modifiers/Ownable.sol';
+import '../modifiers/BotOperated.sol';
 
 
-contract WhitelistData is Ownable {
+contract WhitelistData is BotOperated {
     
 	event LogNewCustomer(address customer, bytes32 id);
     event LogCustomerUpdate(address customer, bytes32 id);
@@ -27,7 +27,7 @@ contract WhitelistData is Ownable {
         bytes32 _id
     ) 
         public
-        onlyOwners
+        onlyBotsOrOwners
     {
         _addCustomer(_customer, _id);
     }
@@ -38,7 +38,7 @@ contract WhitelistData is Ownable {
         bytes32[] _ids
     )
         public
-        onlyOwners
+        onlyBotsOrOwners
     {
         require(_customers.length == _ids.length && _customers.length <= 128, "Less than or equal to 128 customers can be added at once and customer array length must be equal to id array length.");
         
@@ -52,7 +52,7 @@ contract WhitelistData is Ownable {
 		address _customer
 	) 
 		public
-		onlyOwners
+		onlyBotsOrOwners
         isCustomerSpecified(_customer)
 	{
 		bytes32 id = kycId[_customer];
