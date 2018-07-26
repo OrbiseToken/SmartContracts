@@ -5,27 +5,27 @@ import '../common/SafeMath.sol';
 interface EternalDataStorage {
 	function balances(address _owner) external view returns (uint256);
 
-	function setBalance(address _owner, uint256 _value) external returns (bool success);
+	function setBalance(address _owner, uint256 _value) external;
 
 	function allowed(address _owner, address _spender) external view returns (uint256);
 
-	function setAllowance(address _owner, address _spender, uint256 _amount) external returns (bool success);
+	function setAllowance(address _owner, address _spender, uint256 _amount) external;
 
-	function totalSupply() external view returns(uint256);
+	function totalSupply() external view returns (uint256);
 
-	function setTotalSupply(uint256 _value) external returns (bool success);
+	function setTotalSupply(uint256 _value) external;
 
 	function frozenAccounts(address _target) external view returns (bool isFrozen);
 
-	function setFrozenAccount(address _target, bool _isFrozen) external returns (bool success);
+	function setFrozenAccount(address _target, bool _isFrozen) external;
 
-	function increaseAllowance(address _owner,  address _spender, uint256 _increase) external returns (bool success);
+	function increaseAllowance(address _owner,  address _spender, uint256 _increase) external;
 
-	function decreaseAllowance(address _owner,  address _spender, uint256 _decrease) external returns (bool success);
+	function decreaseAllowance(address _owner,  address _spender, uint256 _decrease) external;
 }
 
 interface Ledger {
-	function addTransaction(address _from, address _to, uint _tokens) external returns (bool success);
+	function addTransaction(address _from, address _to, uint _tokens) external;
 }
 
 interface WhitelistData {
@@ -119,7 +119,7 @@ contract ERC20Standard {
 		require(allowed >= _value, 'From account has insufficient balance');
 
 		allowed = allowed.sub(_value);
-		assert(dataStorage.setAllowance(_from, msg.sender, allowed));
+		dataStorage.setAllowance(_from, msg.sender, allowed);
 
 		return _transfer(_from, _to, _value);
 	}
@@ -137,7 +137,7 @@ contract ERC20Standard {
 	function approve(address _spender, uint256 _value) public returns (bool success) {
 		require(_value == 0 || dataStorage.allowed(msg.sender, _spender) == 0, 
 			'Approve value is required to be zero or account has already been approved.');
-		assert(dataStorage.setAllowance(msg.sender, _spender, _value));
+		dataStorage.setAllowance(msg.sender, _spender, _value);
 		
 		emit Approval(msg.sender, _spender, _value);
 		
@@ -152,12 +152,10 @@ contract ERC20Standard {
 	 * @param _spender The address which will spend the funds.
 	 * @param _addedValue The amount of tokens to increase the allowance by.
 	 */
-	function increaseApproval(address _spender, uint256 _addedValue) public returns (bool success) {
-		assert(dataStorage.increaseAllowance(msg.sender, _spender, _addedValue));
+	function increaseApproval(address _spender, uint256 _addedValue) public {
+		dataStorage.increaseAllowance(msg.sender, _spender, _addedValue);
 		
 		emit Approval(msg.sender, _spender, dataStorage.allowed(msg.sender, _spender));
-		
-		return true;
 	}
 
 	/**
@@ -170,12 +168,10 @@ contract ERC20Standard {
 	 * @param _spender The address which will spend the funds.
 	 * @param _subtractedValue The amount of tokens to decrease the allowance by.
 	 */
-	function decreaseApproval(address _spender, uint256 _subtractedValue) public returns (bool success) {		
-		assert(dataStorage.decreaseAllowance(msg.sender, _spender, _subtractedValue));
+	function decreaseApproval(address _spender, uint256 _subtractedValue) public {		
+		dataStorage.decreaseAllowance(msg.sender, _spender, _subtractedValue);
 		
 		emit Approval(msg.sender, _spender, dataStorage.allowed(msg.sender, _spender));
-		
-		return true;
 	}
 
 	/**
@@ -205,10 +201,10 @@ contract ERC20Standard {
 		uint256 toBalance = dataStorage.balances(_to);
 		toBalance = toBalance.add(_value);
 
-		assert(dataStorage.setBalance(_from, fromBalance));
-		assert(dataStorage.setBalance(_to, toBalance));
+		dataStorage.setBalance(_from, fromBalance);
+		dataStorage.setBalance(_to, toBalance);
 
-		assert(ledger.addTransaction(_from, _to, _value));
+		ledger.addTransaction(_from, _to, _value);
 
 		emit Transfer(_from, _to, _value);
 

@@ -31,11 +31,5 @@ contract('ERC20Extended_bot', function ([owner, bot]) {
 			isBot = await this.token.bots(bot);
 			assert.equal(isBot, false);
 		});
-
-		it('setBot Should return true when called from owner', async function () {
-			const result = await this.token.setBot.call(bot, true, { from: owner });
-
-			assert.equal(result, true);
-		});
 	});
 });

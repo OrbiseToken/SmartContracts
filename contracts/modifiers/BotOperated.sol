@@ -46,9 +46,8 @@ contract BotOperated is Ownable {
 	* @param _isAllowed Boolean granting or revoking bot rights.
 	* @return True if the operation has passed or throws if failed.
 	*/
-	function setBot(address _bot, bool _isAllowed) public onlyOwners returns (bool success) {
+	function setBot(address _bot, bool _isAllowed) public onlyOwners {
 		require(_bot != address(0), 'Non-zero bot-address required.');
 		bots[_bot] = _isAllowed;
-		return true;
 	}
 }

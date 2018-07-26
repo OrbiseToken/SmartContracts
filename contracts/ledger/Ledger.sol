@@ -18,11 +18,9 @@ contract Ledger is FromContract {
 	 * @param _from The address of the origin of the transaction
 	 * @param _to The address of the destination of the transaction
 	 * @param _tokens The amount of tokens transferred
-	 * @return success True if the operation was successful
 	 */
-	function addTransaction(address _from, address _to, uint256 _tokens) public fromContract returns (bool success) {
+	function addTransaction(address _from, address _to, uint256 _tokens) public fromContract {
 		transactions.push(Transaction(_from, _to, _tokens));
-		return true;
 	}
 
 	/**
