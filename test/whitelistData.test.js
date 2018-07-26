@@ -31,7 +31,7 @@ const addresess = [
     "0x131a99a59a1bfa3f1d892f06156077614136ff89",
 ]
 
-contract('WhitelistData', ([owner, another, other]) => {
+contract('WhitelistData', ([owner, another, other, bot]) => {
 
 	beforeEach(async () => {
 		this.whitelist = await WhitelistData.new();
@@ -45,7 +45,7 @@ contract('WhitelistData', ([owner, another, other]) => {
 	it('addSingleCustomer Should revert When invoked with an empty `_customer` parameter', async () => {
         const add = this.whitelist.addSingleCustomer(emptyAddress, sampleId, { from: owner });
         await assertRevert(add);
-    });
+        });
     
 	it('addSingleCustomer Should revert When invoked with an empty `_id` parameter', async () => {
         const add = this.whitelist.addSingleCustomer(other, emptyId, { from: owner });
@@ -161,5 +161,47 @@ contract('WhitelistData', ([owner, another, other]) => {
 
         const id = await this.whitelist.kycId(other);
         assert.equal(id, 0);
-	});
+    });
+        
+    it('addSingleCustomer Should revert when not invoked by bot or owner', async () => {
+        const add = this.whitelist.addSingleCustomer(other, sampleId, { from: bot });
+        await assertRevert(add);
+    });
+
+    it('addSingleContract Should work as intended when invoked by bot', async () => {
+        await this.whitelist.setBot(bot, true, { from: owner });
+        await this.whitelist.addSingleCustomer(other, sampleId, { from: bot });
+
+        const id = await this.whitelist.kycId(other);
+        assert.equal(id, sampleId);
+    });
+
+    it('addManyCustomers Should revert when not invoked by bot or owner', async () => {
+        const add = this.whitelist.addManyCustomers(addresess, ids, { from: bot });
+        await assertRevert(add);
+    });
+
+    it('addManyCustomers Should work as intended when invoked by bot', async () => {
+        await this.whitelist.setBot(bot, true, { from: owner });
+        await this.whitelist.addManyCustomers(addresess, ids, { from: bot });
+        for (let i = 0; i < addresess.length; i++) {
+            const id = await this.whitelist.kycId(addresess[i]);
+            assert.equal(id, ids[i]);
+        }
+    });
+
+    it('deleteCustomer Should revert when not invoked by bot or owner', async () => {
+        await this.whitelist.addSingleCustomer(other, sampleId, { from: owner });
+        const del = this.whitelist.deleteCustomer(other, { from: bot });
+        await assertRevert(del);
+    });
+
+    it('deleteCustomer Should work as intended when invoked by bot', async () => {
+        await this.whitelist.addSingleCustomer(other, sampleId, { from: owner });
+        await this.whitelist.setBot(bot, true, { from: owner });
+        await this.whitelist.deleteCustomer(other, { from: bot });
+
+        const id = await this.whitelist.kycId(other);
+        assert.equal(id, false);
+    });    
 });

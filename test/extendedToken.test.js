@@ -107,7 +107,7 @@ contract('ERC20Extended', function ([owner, anotherAccount, wallet, bot]) {
 		assert(balanceAfterWithdraw, 0);
 	});
 
-	it('nonEtherPurchaseTransfer Should allow owners to transfer tokens to specified account without ether', async function () {
+	it('nonEtherPurchaseTransfer Should allow bots to transfer tokens to specified account without ether', async function () {
 		await this.token.unpause({ from: owner });
 		await this.token.mint(bot, 100, { from: owner });
 		await this.token.setBot(bot, true, { from: owner });
@@ -115,5 +115,12 @@ contract('ERC20Extended', function ([owner, anotherAccount, wallet, bot]) {
 		const anotherBalance = await this.token.balanceOf(anotherAccount);
 
 		assert.equal(anotherBalance, 100);
+	});
+
+	it('nonEtherPurchaseTransfer Should not allow non-bot to transfer tokens', async function () {
+		await this.token.unpause({ from: owner });
+		const transfer = this.token.nonEtherPurchaseTransfer(bot, 100, { from: anotherAccount});
+
+		await assertRevert(transfer);
 	});
 });

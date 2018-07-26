@@ -7,4 +7,5 @@ soljson.js
 npm-debug.log*
 babelify-src
 package-lock.json
-coverage*
+coverage
+coverage.json
