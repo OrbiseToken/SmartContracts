@@ -16,21 +16,19 @@ contract BurnableToken is ERC20Standard {
 	 * @notice Destroy tokens from your account.
 	 * @param _value The amount of tokens to burn.
 	 */
-	function burn(uint256 _value) public returns (bool success) {
+	function burn(uint256 _value) public {
 		uint256 senderBalance = dataStorage.balances(msg.sender);
 		require(senderBalance >= _value, 'Burn value less than account balance required.');
 		senderBalance = senderBalance.sub(_value);
-		assert(dataStorage.setBalance(msg.sender, senderBalance));
+		dataStorage.setBalance(msg.sender, senderBalance);
 
 		uint256 totalSupply = dataStorage.totalSupply();
 		totalSupply = totalSupply.sub(_value);
-		assert(dataStorage.setTotalSupply(totalSupply));
+		dataStorage.setTotalSupply(totalSupply);
 
 		emit Burn(msg.sender, _value);
 
 		emit Transfer(msg.sender, address(0), _value);
-
-		return true;
 	}
 
 	/**
@@ -38,7 +36,7 @@ contract BurnableToken is ERC20Standard {
 	 * @param _from The address from which to burn tokens.
 	 * @param _value The amount of money to burn.
 	 */
-	function burnFrom(address _from, uint256 _value) public returns (bool success) {
+	function burnFrom(address _from, uint256 _value) public {
 		uint256 fromBalance = dataStorage.balances(_from);
 		require(fromBalance >= _value, 'Burn value less than from-account balance required.');
 
@@ -46,19 +44,17 @@ contract BurnableToken is ERC20Standard {
 		require(allowed >= _value, 'Burn value less than account allowance required.');
 
 		fromBalance = fromBalance.sub(_value);
-		assert(dataStorage.setBalance(_from, fromBalance));
+		dataStorage.setBalance(_from, fromBalance);
 
 		allowed = allowed.sub(_value);
-		assert(dataStorage.setAllowance(_from, msg.sender, allowed));
+		dataStorage.setAllowance(_from, msg.sender, allowed);
 
 		uint256 totalSupply = dataStorage.totalSupply();
 		totalSupply = totalSupply.sub(_value);
-		assert(dataStorage.setTotalSupply(totalSupply));
+		dataStorage.setTotalSupply(totalSupply);
 
 		emit Burn(_from, _value);
 
 		emit Transfer(_from, address(0), _value);
-
-		return true;
 	}
 }

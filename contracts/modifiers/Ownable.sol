@@ -38,9 +38,8 @@ contract Ownable {
 	* @param _isAllowed Boolean granting or revoking owner rights.
 	* @return True if the operation has passed or throws if failed.
 	*/
-	function setOwner(address _owner, bool _isAllowed) public onlyOwners returns (bool success) {
+	function setOwner(address _owner, bool _isAllowed) public onlyOwners {
 		require(_owner != address(0), 'Non-zero owner-address required.');
 		owners[_owner] = _isAllowed;
-		return true;
 	}
 }

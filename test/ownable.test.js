@@ -37,11 +37,5 @@ contract('ERC20Extended_ownable', function ([owner, anotherAccount, otherAccount
 			isOwner = await this.token.owners(anotherAccount);
 			assert.equal(isOwner, false);
 		});
-
-		it('setOwner Should return true when called from owner', async function () {
-			const result = await this.token.setOwner.call(anotherAccount, true, { from: owner });
-
-			assert.equal(result, true);
-		});
 	});
 });

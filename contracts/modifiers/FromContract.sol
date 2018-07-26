@@ -23,9 +23,8 @@ contract FromContract is Ownable {
 	* @param _newContractAddress The address to transfer current permission to.
 	* @return True, if the operation has passed, or throws if failed.
 	*/
-	function setContractAddress(address _newContractAddress) public onlyOwners returns (bool success) {
+	function setContractAddress(address _newContractAddress) public onlyOwners {
 		require(_newContractAddress != address(0), 'Non-zero contract address required when setting allowed external contract address.');
 		contractAddress = _newContractAddress;
-		return true;
 	}
 }

@@ -77,53 +77,45 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
 	* @dev Function that sets both the sell and the buy price of the token.
 	* @param _sellPrice The price at which the token will be sold.
 	* @param _buyPrice The price at which the token will be bought.
-	* @return success True on operation completion.
 	*/
-	function setPrices(uint256 _sellPrice, uint256 _buyPrice) public onlyBotsOrOwners returns (bool success) {
+	function setPrices(uint256 _sellPrice, uint256 _buyPrice) public onlyBotsOrOwners {
 		sellPrice = _sellPrice;
 		buyPrice = _buyPrice;
-		return true;
 	}
 
 	/**
 	* @dev Function that sets the current wallet address.
 	* @param _walletAddress The address of wallet to be set.
-	* @return success True on operation completion, or throws.
 	*/
-	function setWallet(address _walletAddress) public onlyOwners returns (bool success) {
+	function setWallet(address _walletAddress) public onlyOwners {
 		require(_walletAddress != address(0), 'Non-zero wallet address required.');
 		wallet = _walletAddress;
-		return true;
 	}
 
 	/**
 	* @dev Send Ether to buy tokens at the current token sell price.
-	* @return success True on operation completion, or throws.
 	*/
-	function buy() public payable whenNotPaused isWhitelisted(msg.sender) returns (bool success) {
+	function buy() public payable whenNotPaused isWhitelisted(msg.sender) {
 		uint256 amount = msg.value.mul(1 ether);
 
 		amount = amount.div(sellPrice);
 		
-		assert(_transfer(this, msg.sender, amount));
-		return true;
+		_transfer(this, msg.sender, amount);
 	}
 	
 	/**
 	* @dev Sell `_amount` tokens at the current buy price.
 	* @param _amount The amount to sell.
-	* @return success True on operation completion, or throws.
 	*/
-	function sell(uint256 _amount) public whenNotPaused returns (bool success) {
+	function sell(uint256 _amount) public whenNotPaused {
 		uint256 toBeTransferred = _amount.mul(buyPrice);
 
 		toBeTransferred = toBeTransferred.div(1 ether);
 
 		require(address(this).balance >= toBeTransferred, 'Contract has insufficient balance.');
-		assert(_transfer(msg.sender, this, _amount));
+		_transfer(msg.sender, this, _amount);
 		
 		msg.sender.transfer(toBeTransferred);
-		return true;
 	}
 
 	/**
@@ -136,20 +128,18 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
 	/**
 	* @dev Withdraw `_amount` ETH to the wallet address.
 	* @param _amount The amount to withdraw.
-	* @return success True on operation completion, or throws.
 	*/
-	function withdraw(uint256 _amount) public onlyOwners returns (bool success) {
+	function withdraw(uint256 _amount) public onlyOwners {
 		require(address(this).balance >= _amount, 'Unable to withdraw specified amount.');
 		require(wallet != address(0), 'Non-zero wallet address required.');
 		wallet.transfer(_amount);
-		return true;
 	}
 
 	/**
 	* @dev Transfer, which is used when Orbise is bought with different currency than ETH.
 	* @param _to The address of the recipient.
 	* @param _value The amount of Orbise Tokens to transfer.
-	* @return success True if the transfer was successful, or throws.
+	* @return success True if operation is executed successfully.
 	*/
 	function nonEtherPurchaseTransfer(address _to, uint256 _value) public onlyBots whenNotPaused returns (bool success) {
 		return _transfer(msg.sender, _to, _value);

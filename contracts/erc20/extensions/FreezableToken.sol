@@ -4,7 +4,6 @@ import '../ERC20Standard.sol';
 import '../../modifiers/Ownable.sol';
 
 
-
 /**
  * @title FreezableToken
  * @dev ERC20Standard modified with freezing accounts ability.
@@ -17,13 +16,11 @@ contract FreezableToken is ERC20Standard, Ownable {
 	 * @dev Allow or prevent target address from sending & receiving tokens.
 	 * @param _target Address to be frozen or unfrozen.
 	 * @param _isFrozen Boolean indicating freeze or unfreeze operation.
-	 * @return success True if the operation was successful, or throws. 
 	 */ 
-	function freezeAccount(address _target, bool _isFrozen) public onlyOwners returns (bool success) {
+	function freezeAccount(address _target, bool _isFrozen) public onlyOwners {
 		require(_target != address(0), 'Non-zero to-be-frozen-account address required.');
-		require(dataStorage.setFrozenAccount(_target, _isFrozen), 'Unable to set frozen account.');
+		dataStorage.setFrozenAccount(_target, _isFrozen);
 		emit FrozenFunds(_target, _isFrozen);
-		return true;
 	}
 
 	/**

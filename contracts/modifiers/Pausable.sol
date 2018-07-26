@@ -25,19 +25,17 @@ contract Pausable is BotOperated {
 	* @dev Called by the owner to pause, triggers stopped state.
 	* @return True if the operation has passed.
 	*/
-	function pause() public onlyBotsOrOwners returns (bool success) {
+	function pause() public onlyBotsOrOwners {
 		paused = true;
 		emit Pause();
-		return true;
 	}
 
 	/**
 	* @dev Called by the owner to unpause, returns to normal state.
 	* @return True if the operation has passed.
 	*/
-	function unpause() public onlyBotsOrOwners returns (bool success) {
+	function unpause() public onlyBotsOrOwners {
 		paused = false;
 		emit Unpause();
-		return true;
 	}
 }
