@@ -14,7 +14,7 @@ contract FromContract is Ownable {
 	* @dev modifier that throws if the call is not from the specified contract.
 	*/
 	modifier fromContract() {
-		require(msg.sender == contractAddress, "Function only callable from correct contract.");
+		require(msg.sender == contractAddress, 'Function only callable from correct contract.');
 		_;
 	}
 
@@ -24,7 +24,7 @@ contract FromContract is Ownable {
 	* @return True, if the operation has passed, or throws if failed.
 	*/
 	function setContractAddress(address _newContractAddress) public onlyOwners returns (bool success) {
-		require(_newContractAddress != address(0), "Non-zero contract address required when setting allowed external contract address.");
+		require(_newContractAddress != address(0), 'Non-zero contract address required when setting allowed external contract address.');
 		contractAddress = _newContractAddress;
 		return true;
 	}

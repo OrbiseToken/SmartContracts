@@ -3,7 +3,6 @@ pragma solidity 0.4.24;
 import './BotOperated.sol';
 
 
-
 /**
 * @title Pausable
 * @dev Base contract which allows children to implement an emergency stop mechanism.
@@ -18,7 +17,7 @@ contract Pausable is BotOperated {
 	* @dev Modifier to allow actions only when the contract IS NOT paused.
 	*/
 	modifier whenNotPaused() {
-		require(!paused, "Unpaused contract required.");
+		require(!paused, 'Unpaused contract required.');
 		_;
 	}
 

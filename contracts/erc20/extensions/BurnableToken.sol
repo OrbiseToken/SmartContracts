@@ -18,7 +18,7 @@ contract BurnableToken is ERC20Standard {
 	 */
 	function burn(uint256 _value) public returns (bool success) {
 		uint256 senderBalance = dataStorage.balances(msg.sender);
-		require(senderBalance >= _value, "Burn value less than account balance required.");
+		require(senderBalance >= _value, 'Burn value less than account balance required.');
 		senderBalance = senderBalance.sub(_value);
 		assert(dataStorage.setBalance(msg.sender, senderBalance));
 
@@ -40,10 +40,10 @@ contract BurnableToken is ERC20Standard {
 	 */
 	function burnFrom(address _from, uint256 _value) public returns (bool success) {
 		uint256 fromBalance = dataStorage.balances(_from);
-		require(fromBalance >= _value, "Burn value less than from-account balance required.");
+		require(fromBalance >= _value, 'Burn value less than from-account balance required.');
 
 		uint256 allowed = dataStorage.allowed(_from, msg.sender);
-		require(allowed >= _value, "Burn value less than account allowance required.");
+		require(allowed >= _value, 'Burn value less than account allowance required.');
 
 		fromBalance = fromBalance.sub(_value);
 		assert(dataStorage.setBalance(_from, fromBalance));

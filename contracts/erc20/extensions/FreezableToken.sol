@@ -20,8 +20,8 @@ contract FreezableToken is ERC20Standard, Ownable {
 	 * @return success True if the operation was successful, or throws. 
 	 */ 
 	function freezeAccount(address _target, bool _isFrozen) public onlyOwners returns (bool success) {
-		require(_target != address(0), "Non-zero to-be-frozen-account address required.");
-		require(dataStorage.setFrozenAccount(_target, _isFrozen), "Unable to set frozen account.");
+		require(_target != address(0), 'Non-zero to-be-frozen-account address required.');
+		require(dataStorage.setFrozenAccount(_target, _isFrozen), 'Unable to set frozen account.');
 		emit FrozenFunds(_target, _isFrozen);
 		return true;
 	}
@@ -35,6 +35,9 @@ contract FreezableToken is ERC20Standard, Ownable {
 		return dataStorage.frozenAccounts(_target);
 	}
 
+	/**
+	 * @dev Overrided _transfer function that uses freeze functionality
+	 */
 	function _transfer(address _from, address _to, uint256 _value) internal returns (bool success) {
 		assert(!dataStorage.frozenAccounts(_from));
 

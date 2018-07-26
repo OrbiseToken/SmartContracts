@@ -4,7 +4,6 @@ import '../ERC20Standard.sol';
 import '../../modifiers/Pausable.sol';
 
 
-
 /**
  * @title PausableToken
  * @dev ERC20Standard modified with pausable transfers.

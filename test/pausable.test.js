@@ -5,7 +5,7 @@ const ERC20ExtendedData = artifacts.require('../contracts/erc20/data/ERC20Extend
 const Ledger = artifacts.require('../contracts/ledger/Ledger.sol');
 const WhitelistData = artifacts.require('../contracts/whitelist/WhitelistData.sol');
 
-contract('ERC20Extended_pausable', function ([_, owner, recipient, anotherAccount]) {
+contract('ERC20Extended_pausable', function ([_, owner, recipient, anotherAccount, bot]) {
 	beforeEach(async function () {
 		const tokenStorage = await ERC20ExtendedData.new({ from: owner });
 		const ledger = await Ledger.new({ from: owner });
@@ -39,11 +39,35 @@ contract('ERC20Extended_pausable', function ([_, owner, recipient, anotherAccoun
 			});
 		});
 
-		describe('when the sender is not the token owner', function () {
+		describe('when the sender is not the token owner nor bot', function () {
 			const from = anotherAccount;
 
 			it('reverts', async function () {
 				await testUtil.assertRevert(this.token.pause({ from }));
+			});
+		});
+
+		describe('when the sender is a bot', function () {
+			let from;
+			beforeEach(async function () {
+				await this.token.setBot(bot, true, { from: owner });
+				from = bot;
+			});
+
+			describe('when the token is unpaused', function () {
+				it('pauses the token', async function () {
+					await this.token.pause({ from });
+
+					const paused = await this.token.paused();
+					assert.equal(paused, true);
+				});
+
+				it('emits a Pause event', async function () {
+					const { logs } = await this.token.pause({ from });
+
+					assert.equal(logs.length, 1);
+					assert.equal(logs[0].event, 'Pause');
+				});
 			});
 		});
 	});
