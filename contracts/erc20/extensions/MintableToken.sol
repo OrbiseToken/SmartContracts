@@ -11,6 +11,11 @@ import '../../modifiers/Ownable.sol';
 contract MintableToken is ERC20Standard, Ownable {
 
 	/**
+	 * @dev Hardcap - maximum allowed amount of tokens to be minted
+	 */
+	uint104 public constant MINTING_HARDCAP = 1000000000000;
+
+	/**
 	* @dev Auto-generated function to check whether the minting has finished.
 	* @return True if the minting has finished, or false.
 	*/
@@ -20,8 +25,9 @@ contract MintableToken is ERC20Standard, Ownable {
 	
 	event MintFinished();
 
-	modifier canMint() {
+	modifier canMint(uint256 _amount) {
 		require(!mintingFinished, 'Finished minting required.');
+		require(totalSupply() + _amount <= MINTING_HARDCAP, "Total supply of token in circulation must be below hardcap.");
 		_;
 	}
 
@@ -30,7 +36,7 @@ contract MintableToken is ERC20Standard, Ownable {
 	* @param _to The address that will receive the minted tokens.
 	* @param _amount The amount of tokens to mint.
 	*/
-	function mint(address _to, uint256 _amount) public onlyOwners canMint {
+	function mint(address _to, uint256 _amount) public onlyOwners canMint(_amount) {
 		uint256 calculatedAmount = _amount.mul(1 ether);
 
 		uint256 totalSupply = dataStorage.totalSupply();

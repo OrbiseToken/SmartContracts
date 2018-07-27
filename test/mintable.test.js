@@ -84,6 +84,7 @@ contract('ERC20Extended_mintable', function ([owner, anotherAccount]) {
 
 		describe('mint', function () {
 			const amount = 100;
+			const hardcap = 1000000000000;
 
 			describe('when the sender has the minting permission', function () {
 				const from = minter;
@@ -106,6 +107,11 @@ contract('ERC20Extended_mintable', function ([owner, anotherAccount]) {
 						assert.equal(logs[1].event, 'Mint');
 						assert.equal(logs[1].args._to, owner);
 						assert.equal(logs[1].args._amount, web3.toWei('100', 'ether'));
+					});
+
+					it('does not mint when added mint value goes over the hardcap', async function () {
+						const mintTooMuch = this.token.mint(this.token.address, hardcap+1, { from });
+						await testUtil.assertRevert(mintTooMuch);
 					});
 				});
 
