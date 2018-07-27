@@ -13,7 +13,7 @@ contract MintableToken is ERC20Standard, Ownable {
 	/**
 	 * @dev Hardcap - maximum allowed amount of tokens to be minted
 	 */
-	uint104 public constant MINTING_HARDCAP = 1000000000000000000000000000000;
+	uint104 public constant MINTING_HARDCAP = 1e30;
 
 	/**
 	* @dev Auto-generated function to check whether the minting has finished.

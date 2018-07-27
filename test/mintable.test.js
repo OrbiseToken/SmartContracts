@@ -84,7 +84,7 @@ contract('ERC20Extended_mintable', function ([owner, anotherAccount]) {
 
 		describe('mint', function () {
 			const amount = 100;
-			const hardcap = 1000000000000000000000000000000;
+			const hardcap = 1e30;
 
 			describe('when the sender has the minting permission', function () {
 				const from = minter;
@@ -110,7 +110,8 @@ contract('ERC20Extended_mintable', function ([owner, anotherAccount]) {
 					});
 
 					it('does not mint when added mint value goes over the hardcap', async function () {
-						const mintTooMuch = this.token.mint(this.token.address, hardcap+1, { from });
+						await this.token.mint(this.token.address, 1, { from });
+						const mintTooMuch = this.token.mint(this.token.address, hardcap, { from });
 						await testUtil.assertRevert(mintTooMuch);
 					});
 				});
