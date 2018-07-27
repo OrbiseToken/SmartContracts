@@ -26,8 +26,8 @@ contract MintableToken is ERC20Standard, Ownable {
 	event MintFinished();
 
 	modifier canMint(uint256 _amount) {
-		require(!mintingFinished, 'Finished minting required.');
-		require(totalSupply() + _amount <= MINTING_HARDCAP, "Total supply of token in circulation must be below hardcap.");
+		require(!mintingFinished, 'Uninished minting required.');
+		require(dataStorage.totalSupply().add(_amount) <= MINTING_HARDCAP, "Total supply of token in circulation must be below hardcap.");
 		_;
 	}
 
