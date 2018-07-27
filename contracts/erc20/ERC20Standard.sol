@@ -135,8 +135,12 @@ contract ERC20Standard {
 	 */
 	 
 	function approve(address _spender, uint256 _value) public returns (bool success) {
-		require(_value == 0 || dataStorage.allowed(msg.sender, _spender) == 0, 
-			'Approve value is required to be zero or account has already been approved.');
+		require
+		(
+			_value == 0 || dataStorage.allowed(msg.sender, _spender) == 0,
+			'Approve value is required to be zero or account has already been approved.'
+		);
+		
 		dataStorage.setAllowance(msg.sender, _spender, _value);
 		
 		emit Approval(msg.sender, _spender, _value);

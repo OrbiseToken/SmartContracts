@@ -2,6 +2,8 @@ pragma solidity 0.4.24;
 
 import '../modifiers/BotOperated.sol';
 
+
+
 /**
  * @title WhitelistData
  * @dev The WhitelistData contract holds whitelisted addresses, and provides functionality for adding and removing addresses
@@ -64,8 +66,11 @@ contract WhitelistData is BotOperated {
 		public
 		onlyBotsOrOwners
 	{
-		require(_customers.length == _ids.length && _customers.length <= 128,
-			'Less than or equal to 128 customers can be added at once and customer array length must be equal to id array length.');
+		require
+		(
+			_customers.length == _ids.length && _customers.length <= 128,
+			'Less than or equal to 128 customers can be added at once and customer array length must be equal to id array length.'
+		);
 		
 		for (uint8 i = 0; i < _customers.length; i++) {
 			_addCustomer(_customers[i], _ids[i]);

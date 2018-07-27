@@ -3,10 +3,12 @@ image: node:8
 before_script:
   - npm install -g ganache-cli
   - npm install -g truffle
+  - npm install -g solium
   - npm install
 
 testing:
   script:
+    - solium -d contracts/ --fix
     - ganache-cli -l 0xfffffffffff -g 0x01 -e 4200 -m "candy maple cake sugar pudding cream honey rich smooth crumble sweet treat" > /dev/null &
     - truffle compile
     - truffle migrate

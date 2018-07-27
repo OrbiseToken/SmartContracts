@@ -2,6 +2,8 @@ pragma solidity 0.4.24;
 
 import './Ownable.sol';
 
+
+
 /**
  * @title BotOperated
  * @dev The BotOperated contract holds bot addresses, and provides basic authorization control
