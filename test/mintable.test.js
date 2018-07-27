@@ -84,7 +84,7 @@ contract('ERC20Extended_mintable', function ([owner, anotherAccount]) {
 
 		describe('mint', function () {
 			const amount = 100;
-			const hardcap = 1000000000000;
+			const hardcap = 1000000000000000000000000000000;
 
 			describe('when the sender has the minting permission', function () {
 				const from = minter;
