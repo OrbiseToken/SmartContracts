@@ -129,7 +129,7 @@ contract('ERC20Extended_pausable', function ([_, owner, recipient, anotherAccoun
 		describe('transfer', function () {
 			beforeEach(async function () {
 				await this.token.unpause({ from });
-				await this.token.mint(this.token.address, 1, { from });
+				await this.token.mint(this.token.address, 100, { from });
 				await this.token.buy({ from: owner, value: 100 });
 			});
 
@@ -193,7 +193,7 @@ contract('ERC20Extended_pausable', function ([_, owner, recipient, anotherAccoun
 		describe('transfer from', function () {
 			beforeEach(async function () {
 				await this.token.unpause({ from });
-				await this.token.mint(this.token.address, 1, { from });
+				await this.token.mint(this.token.address, 100, { from });
 				await this.token.buy({ from: owner, value: 100 });
 				await this.token.approve(anotherAccount, 50, { from: owner });
 			});

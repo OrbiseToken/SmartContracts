@@ -93,10 +93,8 @@ contract('ERC20Extended_mintable', function ([owner, anotherAccount]) {
 					it('mints the requested amount', async function () {
 						await this.token.mint(owner, amount, { from });
 
-						const minted = await web3.toWei('100', 'ether');
-
 						const balance = await this.token.balanceOf(owner);
-						assert.equal(balance, minted);
+						assert.equal(balance, 100);
 					});
 
 					it('emits a mint and a transfer event', async function () {
@@ -106,7 +104,7 @@ contract('ERC20Extended_mintable', function ([owner, anotherAccount]) {
 						assert.equal(logs[0].event, 'Transfer');
 						assert.equal(logs[1].event, 'Mint');
 						assert.equal(logs[1].args._to, owner);
-						assert.equal(logs[1].args._amount, web3.toWei('100', 'ether'));
+						assert.equal(logs[1].args._amount, amount);
 					});
 
 					it('does not mint when added mint value goes over the hardcap', async function () {
