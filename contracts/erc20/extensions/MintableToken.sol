@@ -25,9 +25,8 @@ contract MintableToken is ERC20Standard, Ownable {
 	
 	event MintFinished();
 
-	modifier canMint(uint256 _amount) {
+	modifier canMint() {
 		require(!mintingFinished, 'Uninished minting required.');
-		require(dataStorage.totalSupply().add(_amount) <= MINTING_HARDCAP, 'Total supply of token in circulation must be below hardcap.');
 		_;
 	}
 
@@ -36,22 +35,23 @@ contract MintableToken is ERC20Standard, Ownable {
 	* @param _to The address that will receive the minted tokens.
 	* @param _amount The amount of tokens to mint.
 	*/
-	function mint(address _to, uint256 _amount) public onlyOwners canMint(_amount) {
-		uint256 calculatedAmount = _amount.mul(1 ether);
-
+	function mint(address _to, uint256 _amount) public onlyOwners canMint() {
 		uint256 totalSupply = dataStorage.totalSupply();
-		totalSupply = totalSupply.add(calculatedAmount);
+		totalSupply = totalSupply.add(_amount);
+		
+		require(totalSupply <= MINTING_HARDCAP, 'Total supply of token in circulation must be below hardcap.');
+		
 		dataStorage.setTotalSupply(totalSupply);
 
 		uint256 toBalance = dataStorage.balances(_to);
-		toBalance = toBalance.add(calculatedAmount);
+		toBalance = toBalance.add(_amount);
 		dataStorage.setBalance(_to, toBalance);
 
-		ledger.addTransaction(address(0), _to, calculatedAmount);
+		ledger.addTransaction(address(0), _to, _amount);
 
-		emit Transfer(address(0), _to, calculatedAmount);
+		emit Transfer(address(0), _to, _amount);
 
-		emit Mint(_to, calculatedAmount);
+		emit Mint(_to, _amount);
 	}
 
 	/**

@@ -35,7 +35,7 @@ contract('ERC20Extended_burnable', function ([owner, burner]) {
 
 			beforeEach(async function () {
 				await this.token.unpause({ from });
-				await this.token.mint(this.token.address, 1, { from });
+				await this.token.mint(this.token.address, amount, { from });
 				await this.token.buy({ from: owner, value: amount });
 				const initialSupply = await this.token.totalSupply();
 				const { logs } = await this.token.burn(amount, { from });
@@ -72,7 +72,7 @@ contract('ERC20Extended_burnable', function ([owner, burner]) {
 			const amount = 100;
 			beforeEach(async function () {
 				await this.token.unpause({ from });
-				await this.token.mint(this.token.address, 1, { from });
+				await this.token.mint(this.token.address, amount, { from });
 				await this.token.buy({ from: owner, value: amount });
 			});
 			const greaterAmount = amount + 1;
@@ -89,7 +89,7 @@ contract('ERC20Extended_burnable', function ([owner, burner]) {
 
 			beforeEach(async function () {
 				await this.token.unpause({ from: owner });
-				await this.token.mint(this.token.address, 1, { from: owner });
+				await this.token.mint(this.token.address, 500, { from: owner });
 				await this.token.buy({ from: owner, value: 500 });
 				await this.token.approve(burner, 300, { from: owner });
 				const initialSupply = this.token.totalSupply();
@@ -132,7 +132,7 @@ contract('ERC20Extended_burnable', function ([owner, burner]) {
 			const newAmount = 501;
 			it('reverts', async function () {
 				await this.token.unpause({ from: owner });
-				await this.token.mint(this.token.address, 1, { from: owner });
+				await this.token.mint(this.token.address, 500, { from: owner });
 				await this.token.buy({ from: owner, value: 500 });
 				await this.token.approve(burner, newAmount, { from: owner });
 				await testUtil.assertRevert(this.token.burnFrom(owner, newAmount, { from: burner }));
@@ -143,7 +143,7 @@ contract('ERC20Extended_burnable', function ([owner, burner]) {
 			const newAmount = 100;
 			it('reverts', async function () {
 				await this.token.unpause({ from: owner });
-				await this.token.mint(this.token.address, 1, { from: owner });
+				await this.token.mint(this.token.address, 500, { from: owner });
 				await this.token.buy({ from: owner, value: 500 });
 				await this.token.approve(burner, newAmount - 1, { from: owner });
 				await testUtil.assertRevert(this.token.burnFrom(owner, newAmount, { from: burner }));

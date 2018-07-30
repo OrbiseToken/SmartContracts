@@ -19,7 +19,7 @@ contract('ERC20Standard', function ([_, owner, recipient, anotherAccount]) {
 		await tokenStorage.setContractAddress(this.token.address, { from: owner });
 		await ledger.setContractAddress(this.token.address, { from: owner });
 		await this.token.unpause({ from: owner });
-		await this.token.mint(this.token.address, 1, { from: owner });
+		await this.token.mint(this.token.address, 100, { from: owner });
 		await this.token.buy({ from: owner, value: 100 });
 	});
 
@@ -27,7 +27,7 @@ contract('ERC20Standard', function ([_, owner, recipient, anotherAccount]) {
 		it('returns the total amount of tokens', async function () {
 			const totalSupply = await this.token.totalSupply();
 
-			assert.equal(totalSupply, web3.toWei('1', 'ether'));
+			assert.equal(totalSupply, 100);
 		});
 	});
 
