@@ -30,19 +30,17 @@ contract MintableToken is ERC20Standard, Ownable {
 		_;
 	}
 
-	modifier isBelowHardcap(uint256 _amount) {
-		require(dataStorage.totalSupply().add(_amount) <= MINTING_HARDCAP, 'Total supply of token in circulation must be below hardcap.');
-		_;
-	}
-
 	/**
 	* @dev Function to mint tokens
 	* @param _to The address that will receive the minted tokens.
 	* @param _amount The amount of tokens to mint.
 	*/
-	function mint(address _to, uint256 _amount) public onlyOwners canMint() isBelowHardcap(_amount) {
+	function mint(address _to, uint256 _amount) public onlyOwners canMint() {
 		uint256 totalSupply = dataStorage.totalSupply();
 		totalSupply = totalSupply.add(_amount);
+		
+		require(totalSupply <= MINTING_HARDCAP, 'Total supply of token in circulation must be below hardcap.');
+		
 		dataStorage.setTotalSupply(totalSupply);
 
 		uint256 toBalance = dataStorage.balances(_to);
