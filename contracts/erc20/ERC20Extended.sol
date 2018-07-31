@@ -96,7 +96,9 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
 	* @dev Send Ether to buy tokens at the current token sell price.
 	*/
 	function buy() public payable whenNotPaused isWhitelisted(msg.sender) {
-		uint256 amount = msg.value.mul(1 ether);
+		uint256 amount = msg.value.mul(1e18);
+
+		require(amount >= sellPrice, "Buy amount too small.");
 
 		amount = amount.div(sellPrice);
 		
@@ -110,7 +112,9 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
 	function sell(uint256 _amount) public whenNotPaused {
 		uint256 toBeTransferred = _amount.mul(buyPrice);
 
-		toBeTransferred = toBeTransferred.div(1 ether);
+		require(toBeTransferred >= 1e18, "Sell amount too small");
+
+		toBeTransferred = toBeTransferred.div(1e18);
 
 		require(address(this).balance >= toBeTransferred, 'Contract has insufficient balance.');
 		_transfer(msg.sender, this, _amount);
