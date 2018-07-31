@@ -49,7 +49,7 @@ contract('ERC20Extended', function ([owner, anotherAccount, wallet, bot]) {
 	describe('extended token has functions which allow accounts to exchange their tokens with ether', function () {
 		beforeEach(async function () {
 			await this.token.unpause({ from: owner });
-			await this.token.mint(this.token.address, 100, { from: owner });
+			await this.token.mint(this.token.address, 1000, { from: owner });
 			await this.whitelist.addSingleCustomer(anotherAccount, '0xe9ce785086f5c3b748f71d481085ecfed6e8b27dde50ff827a68cda21a68abdb');
 			const { logs } = await this.token.buy({ from: anotherAccount, value: 100 });
 			this.logs = logs;
@@ -66,6 +66,13 @@ contract('ERC20Extended', function ([owner, anotherAccount, wallet, bot]) {
 			assert.equal(balance, 100);
 		});
 
+		it('buy Should revert when not enough ether is sent to purchase tokens', async function () {
+			const newPrices = web3.toWei('2', 'ether');
+			await this.token.setPrices(newPrices, newPrices, { from: owner });
+			const purchase = this.token.buy({ from: anotherAccount, value: 1});
+			await assertRevert(purchase);
+		})
+
 		it('buy Should emit a Transfer event when called', async function () {
 			assert.equal(this.logs[0].event, 'Transfer');
 			assert.equal(this.logs[0].args._from, this.token.address);
@@ -79,8 +86,15 @@ contract('ERC20Extended', function ([owner, anotherAccount, wallet, bot]) {
 			const contractBalance = await this.token.balanceOf(this.token.address);
 
 			assert.equal(balance, 0);
-			assert.equal(contractBalance, 100);
+			assert.equal(contractBalance, 1000);
 		});
+
+		it('sell Should revert when too small an amount of tokens is sold', async function () {
+			const newPrices = web3.toWei('0.5', 'ether');
+			await this.token.setPrices(newPrices, newPrices, { from: owner });
+			const sell = this.token.sell(1, {from: anotherAccount });
+			await assertRevert(sell);
+		})
 
 		it('sell Should emit a Transfer event when called', async function () {
 			const { logs } = await this.token.sell(100, { from: anotherAccount });
@@ -100,7 +114,6 @@ contract('ERC20Extended', function ([owner, anotherAccount, wallet, bot]) {
 
 	it('withdraw Should allow owners to withdraw from token contract', async function () {
 		await this.token.sendTransaction({ from: anotherAccount, value: 100 });
-		await this.token.getContractBalance();
 		await this.token.setWallet(wallet, { from: owner });
 		await this.token.withdraw(100, { from: owner });
 		const balanceAfterWithdraw = await this.token.getContractBalance();
