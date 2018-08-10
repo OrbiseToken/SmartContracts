@@ -101,6 +101,8 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
 		require(amount >= sellPrice, "Buy amount too small.");
 
 		amount = amount.div(sellPrice);
+
+		require(amount >= 200, "Buy amount too small");
 		
 		_transfer(this, msg.sender, amount);
 	}
@@ -145,7 +147,7 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
 	* @param _value The amount of Orbise Tokens to transfer.
 	* @return success True if operation is executed successfully.
 	*/
-	function nonEtherPurchaseTransfer(address _to, uint256 _value) public onlyBots whenNotPaused returns (bool success) {
+	function nonEtherPurchaseTransfer(address _to, uint256 _value) public isWhitelisted(_to) onlyBots whenNotPaused returns (bool success) {
 		return _transfer(msg.sender, _to, _value);
 	}
 }

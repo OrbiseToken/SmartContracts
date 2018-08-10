@@ -31,7 +31,7 @@ contract('ERC20Extended_burnable', function ([owner, burner]) {
 		const from = owner;
 
 		describe('when the given amount is not greater than balance of the sender', function () {
-			const amount = 100;
+			const amount = 200;
 
 			beforeEach(async function () {
 				await this.token.unpause({ from });
@@ -69,7 +69,7 @@ contract('ERC20Extended_burnable', function ([owner, burner]) {
 		});
 
 		describe('when the given amount is greater than the balance of the sender', function () {
-			const amount = 100;
+			const amount = 200;
 			beforeEach(async function () {
 				await this.token.unpause({ from });
 				await this.token.mint(this.token.address, amount, { from });

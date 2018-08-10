@@ -129,32 +129,32 @@ contract('ERC20Extended_pausable', function ([_, owner, recipient, anotherAccoun
 		describe('transfer', function () {
 			beforeEach(async function () {
 				await this.token.unpause({ from });
-				await this.token.mint(this.token.address, 100, { from });
-				await this.token.buy({ from: owner, value: 100 });
+				await this.token.mint(this.token.address, 200, { from });
+				await this.token.buy({ from: owner, value: 200 });
 			});
 
 			it('allows to transfer when unpaused', async function () {
 
-				await this.token.transfer(recipient, 100, { from: owner });
+				await this.token.transfer(recipient, 200, { from: owner });
 
 				const senderBalance = await this.token.balanceOf(owner);
 				assert.equal(senderBalance, 0);
 
 				const recipientBalance = await this.token.balanceOf(recipient);
-				assert.equal(recipientBalance, 100);
+				assert.equal(recipientBalance, 200);
 			});
 
 			it('allows to transfer when paused and then unpaused', async function () {
 				await this.token.pause({ from: owner });
 				await this.token.unpause({ from: owner });
 
-				await this.token.transfer(recipient, 100, { from: owner });
+				await this.token.transfer(recipient, 200, { from: owner });
 
 				const senderBalance = await this.token.balanceOf(owner);
 				assert.equal(senderBalance, 0);
 
 				const recipientBalance = await this.token.balanceOf(recipient);
-				assert.equal(recipientBalance, 100);
+				assert.equal(recipientBalance, 200);
 			});
 
 			it('reverts when trying to transfer when paused', async function () {
@@ -193,8 +193,8 @@ contract('ERC20Extended_pausable', function ([_, owner, recipient, anotherAccoun
 		describe('transfer from', function () {
 			beforeEach(async function () {
 				await this.token.unpause({ from });
-				await this.token.mint(this.token.address, 100, { from });
-				await this.token.buy({ from: owner, value: 100 });
+				await this.token.mint(this.token.address, 200, { from });
+				await this.token.buy({ from: owner, value: 200 });
 				await this.token.approve(anotherAccount, 50, { from: owner });
 			});
 
@@ -202,7 +202,7 @@ contract('ERC20Extended_pausable', function ([_, owner, recipient, anotherAccoun
 				await this.token.transferFrom(owner, recipient, 40, { from: anotherAccount });
 
 				const senderBalance = await this.token.balanceOf(owner);
-				assert.equal(senderBalance, 60);
+				assert.equal(senderBalance, 160);
 
 				const recipientBalance = await this.token.balanceOf(recipient);
 				assert.equal(recipientBalance, 40);
@@ -215,7 +215,7 @@ contract('ERC20Extended_pausable', function ([_, owner, recipient, anotherAccoun
 				await this.token.transferFrom(owner, recipient, 40, { from: anotherAccount });
 
 				const senderBalance = await this.token.balanceOf(owner);
-				assert.equal(senderBalance, 60);
+				assert.equal(senderBalance, 160);
 
 				const recipientBalance = await this.token.balanceOf(recipient);
 				assert.equal(recipientBalance, 40);

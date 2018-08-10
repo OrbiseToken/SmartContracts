@@ -55,8 +55,8 @@ contract('ERC20Extended_freezable', function ([owner, frozen, anotherAccount]) {
 
 			it('frozen accounts should not be able to transfer when frozen', async function () {
 				await this.token.unpause({ from: owner });
-				await this.token.mint(this.token.address, 1, { from: owner });
-				const purchase = this.token.buy({ from: frozen, value: 1 });
+				await this.token.mint(this.token.address, 200, { from: owner });
+				const purchase = this.token.buy({ from: frozen, value: 200 });
 
 				await testUtil.assertThrow(purchase);
 			});

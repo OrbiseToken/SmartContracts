@@ -51,19 +51,19 @@ contract('ERC20Extended', function ([owner, anotherAccount, wallet, bot]) {
 			await this.token.unpause({ from: owner });
 			await this.token.mint(this.token.address, 1000, { from: owner });
 			await this.whitelist.addSingleCustomer(anotherAccount, '0xe9ce785086f5c3b748f71d481085ecfed6e8b27dde50ff827a68cda21a68abdb');
-			const { logs } = await this.token.buy({ from: anotherAccount, value: 100 });
+			const { logs } = await this.token.buy({ from: anotherAccount, value: 200 });
 			this.logs = logs;
 		});
 
 		it('buy Should revert when the invoker is not whitelisted', async function () {
 			await this.whitelist.deleteCustomer(anotherAccount);
-			const result = this.token.buy({ from: anotherAccount, value: 100 });
+			const result = this.token.buy({ from: anotherAccount, value: 200 });
 			await assertRevert(result);
 		});
 
 		it('buy Should allow accounts to give ether in exchange for tokens', async function () {
 			const balance = await this.token.balanceOf(anotherAccount);
-			assert.equal(balance, 100);
+			assert.equal(balance, 200);
 		});
 
 		it('buy Should revert when not enough ether is sent to purchase tokens', async function () {
@@ -77,11 +77,11 @@ contract('ERC20Extended', function ([owner, anotherAccount, wallet, bot]) {
 			assert.equal(this.logs[0].event, 'Transfer');
 			assert.equal(this.logs[0].args._from, this.token.address);
 			assert.equal(this.logs[0].args._to, anotherAccount);
-			assert.equal(this.logs[0].args._value, 100);
+			assert.equal(this.logs[0].args._value, 200);
 		});
 
 		it('sell Should allow accounts to give tokens in exchange for ether', async function () {
-			await this.token.sell(100, { from: anotherAccount });
+			await this.token.sell(200, { from: anotherAccount });
 			const balance = await this.token.balanceOf(anotherAccount);
 			const contractBalance = await this.token.balanceOf(this.token.address);
 
@@ -124,6 +124,7 @@ contract('ERC20Extended', function ([owner, anotherAccount, wallet, bot]) {
 		await this.token.unpause({ from: owner });
 		await this.token.mint(bot, 100, { from: owner });
 		await this.token.setBot(bot, true, { from: owner });
+		this.whitelist.addSingleCustomer(anotherAccount, "0x004cfaa35c4f3c38af4a65376596f588a893bffca7bffbd507885d7079000c0d", { from: owner});
 		await this.token.nonEtherPurchaseTransfer(anotherAccount, 100, { from: bot });
 		const anotherBalance = await this.token.balanceOf(anotherAccount);
 
@@ -132,6 +133,7 @@ contract('ERC20Extended', function ([owner, anotherAccount, wallet, bot]) {
 
 	it('nonEtherPurchaseTransfer Should not allow non-bot to transfer tokens', async function () {
 		await this.token.unpause({ from: owner });
+		this.whitelist.addSingleCustomer(bot, "0x004cfaa35c4f3c38af4a65376596f588a893bffca7bffbd507885d7079000c0d", { from: owner});
 		const transfer = this.token.nonEtherPurchaseTransfer(bot, 100, { from: anotherAccount});
 
 		await assertRevert(transfer);

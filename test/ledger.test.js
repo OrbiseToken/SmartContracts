@@ -20,8 +20,8 @@ contract('ERC20Extended_ledger', function ([owner]) {
 	describe('ledger should allow past transactions to be accessed by index', function () {
 		beforeEach(async function () {
 			await this.token.unpause({ from: owner });
-			await this.token.mint(this.token.address, 100, { from: owner });
-			const { logs } = await this.token.buy({ from: owner, value: 100 });
+			await this.token.mint(this.token.address, 200, { from: owner });
+			const { logs } = await this.token.buy({ from: owner, value: 200 });
 			this.logs = logs;
 		})
 

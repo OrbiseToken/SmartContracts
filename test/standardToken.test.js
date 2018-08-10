@@ -19,15 +19,15 @@ contract('ERC20Standard', function ([_, owner, recipient, anotherAccount]) {
 		await tokenStorage.setContractAddress(this.token.address, { from: owner });
 		await ledger.setContractAddress(this.token.address, { from: owner });
 		await this.token.unpause({ from: owner });
-		await this.token.mint(this.token.address, 100, { from: owner });
-		await this.token.buy({ from: owner, value: 100 });
+		await this.token.mint(this.token.address, 200, { from: owner });
+		await this.token.buy({ from: owner, value: 200 });
 	});
 
 	describe('total supply', function () {
 		it('returns the total amount of tokens', async function () {
 			const totalSupply = await this.token.totalSupply();
 
-			assert.equal(totalSupply, 100);
+			assert.equal(totalSupply, 200);
 		});
 	});
 
@@ -44,7 +44,7 @@ contract('ERC20Standard', function ([_, owner, recipient, anotherAccount]) {
 			it('returns the total amount of tokens', async function () {
 				const balance = await this.token.balanceOf(owner);
 
-				assert.equal(balance, 100);
+				assert.equal(balance, 200);
 			});
 		});
 	});
@@ -54,7 +54,7 @@ contract('ERC20Standard', function ([_, owner, recipient, anotherAccount]) {
 			const to = recipient;
 
 			describe('when the sender does not have enough balance', function () {
-				const amount = 101;
+				const amount = 201;
 
 				it('reverts', async function () {
 					await testUtil.assertRevert(this.token.transfer(to, amount, { from: owner }));
@@ -62,7 +62,7 @@ contract('ERC20Standard', function ([_, owner, recipient, anotherAccount]) {
 			});
 
 			describe('when the sender has enough balance', function () {
-				const amount = 100;
+				const amount = 200;
 
 				it('transfers the requested amount', async function () {
 					await this.token.transfer(to, amount, { from: owner });
@@ -203,7 +203,7 @@ contract('ERC20Standard', function ([_, owner, recipient, anotherAccount]) {
 						await this.token.transferFrom(owner, to, amount, { from: spender });
 
 						const senderBalance = await this.token.balanceOf(owner);
-						assert.equal(senderBalance, 0);
+						assert.equal(senderBalance, 100);
 
 						const recipientBalance = await this.token.balanceOf(to);
 						assert.equal(recipientBalance, amount);
