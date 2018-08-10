@@ -16,13 +16,13 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
 	* @dev Auto-generated function that returns the name of the token.
 	* @return The name of the token.
 	*/
-	string public constant name = 'Orbise';
+	string public constant name = 'ORBISE10';
 
 	/**
 	* @dev Auto-generated function that returns the symbol of the token.
 	* @return The symbol of the token.
 	*/
-	string public constant symbol = 'ORB';
+	string public constant symbol = 'ORBT';
 
 	/**
 	* @dev Auto-generated function that returns the number of decimals of the token.
