@@ -11,7 +11,7 @@ contract('ERC20Extended_freezable', function ([owner, frozen, anotherAccount]) {
 		const tokenStorage = await ERC20ExtendedData.new({ from: owner });
 		const ledger = await Ledger.new({ from: owner });
 		const whitelist = await WhitelistData.new({ from: owner });
-		const price = await web3.toWei('1', 'ether');
+		const price = 1;
 		this.token = await ERC20Extended.new(tokenStorage.address, ledger.address, whitelist.address, { from: owner });
 		await whitelist.addSingleCustomer(frozen, '0xe9ce785086f5c3b748f71d481085ecfed6e8b27dde50ff827a68cda21a68abdb');
 		await this.token.setPrices(price, price, { from: owner });
@@ -55,7 +55,7 @@ contract('ERC20Extended_freezable', function ([owner, frozen, anotherAccount]) {
 
 			it('frozen accounts should not be able to transfer when frozen', async function () {
 				await this.token.unpause({ from: owner });
-				await this.token.mint(this.token.address, 200, { from: owner });
+				await this.token.mint(this.token.address, 200e18, { from: owner });
 				const purchase = this.token.buy({ from: frozen, value: 200 });
 
 				await testUtil.assertThrow(purchase);
