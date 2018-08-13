@@ -12,22 +12,22 @@ contract('ERC20Standard', function ([_, owner, recipient, anotherAccount]) {
 		const tokenStorage = await ERC20ExtendedData.new({ from: owner });
 		const ledger = await Ledger.new({ from: owner });
 		const whitelist = await WhitelistData.new({ from: owner });
-		const price = await web3.toWei('1', 'ether');
+		const price = 1;
 		this.token = await ERC20Extended.new(tokenStorage.address, ledger.address, whitelist.address, { from: owner });
 		await whitelist.addSingleCustomer(owner, '0xe9ce785086f5c3b748f71d481085ecfed6e8b27dde50ff827a68cda21a68abdb', { from: owner });
 		await this.token.setPrices(price, price, { from: owner });
 		await tokenStorage.setContractAddress(this.token.address, { from: owner });
 		await ledger.setContractAddress(this.token.address, { from: owner });
 		await this.token.unpause({ from: owner });
-		await this.token.mint(this.token.address, 100, { from: owner });
-		await this.token.buy({ from: owner, value: 100 });
+		await this.token.mint(this.token.address, 200e18, { from: owner });
+		await this.token.buy({ from: owner, value: 200 });
 	});
 
 	describe('total supply', function () {
 		it('returns the total amount of tokens', async function () {
 			const totalSupply = await this.token.totalSupply();
 
-			assert.equal(totalSupply, 100);
+			assert.equal(totalSupply, 200e18);
 		});
 	});
 
@@ -44,7 +44,7 @@ contract('ERC20Standard', function ([_, owner, recipient, anotherAccount]) {
 			it('returns the total amount of tokens', async function () {
 				const balance = await this.token.balanceOf(owner);
 
-				assert.equal(balance, 100);
+				assert.equal(balance, 200e18);
 			});
 		});
 	});
@@ -54,7 +54,7 @@ contract('ERC20Standard', function ([_, owner, recipient, anotherAccount]) {
 			const to = recipient;
 
 			describe('when the sender does not have enough balance', function () {
-				const amount = 101;
+				const amount = 201e18;
 
 				it('reverts', async function () {
 					await testUtil.assertRevert(this.token.transfer(to, amount, { from: owner }));
@@ -62,7 +62,7 @@ contract('ERC20Standard', function ([_, owner, recipient, anotherAccount]) {
 			});
 
 			describe('when the sender has enough balance', function () {
-				const amount = 100;
+				const amount = 200e18;
 
 				it('transfers the requested amount', async function () {
 					await this.token.transfer(to, amount, { from: owner });
@@ -193,17 +193,17 @@ contract('ERC20Standard', function ([_, owner, recipient, anotherAccount]) {
 
 			describe('when the spender has enough approved balance', function () {
 				beforeEach(async function () {
-					await this.token.approve(spender, 100, { from: owner });
+					await this.token.approve(spender, 100e18, { from: owner });
 				});
 
 				describe('when the owner has enough balance', function () {
-					const amount = 100;
+					const amount = 100e18;
 
 					it('transfers the requested amount', async function () {
 						await this.token.transferFrom(owner, to, amount, { from: spender });
 
 						const senderBalance = await this.token.balanceOf(owner);
-						assert.equal(senderBalance, 0);
+						assert.equal(senderBalance, 100e18);
 
 						const recipientBalance = await this.token.balanceOf(to);
 						assert.equal(recipientBalance, amount);
@@ -227,7 +227,7 @@ contract('ERC20Standard', function ([_, owner, recipient, anotherAccount]) {
 				});
 
 				describe('when the owner does not have enough balance', function () {
-					const amount = 101;
+					const amount = 101e18;
 
 					it('reverts', async function () {
 						await testUtil.assertRevert(this.token.transferFrom(owner, to, amount, { from: spender }));

@@ -10,7 +10,7 @@ contract('ERC20Extended_pausable', function ([_, owner, recipient, anotherAccoun
 		const tokenStorage = await ERC20ExtendedData.new({ from: owner });
 		const ledger = await Ledger.new({ from: owner });
 		const whitelist = await WhitelistData.new({ from: owner });
-		const price = await web3.toWei('1', 'ether');
+		const price = 1;
 		this.token = await ERC20Extended.new(tokenStorage.address, ledger.address, whitelist.address, { from: owner });
 		await whitelist.addSingleCustomer(owner, '0xe9ce785086f5c3b748f71d481085ecfed6e8b27dde50ff827a68cda21a68abdb', { from: owner });
 		await this.token.setPrices(price, price, { from: owner });
@@ -129,32 +129,32 @@ contract('ERC20Extended_pausable', function ([_, owner, recipient, anotherAccoun
 		describe('transfer', function () {
 			beforeEach(async function () {
 				await this.token.unpause({ from });
-				await this.token.mint(this.token.address, 100, { from });
-				await this.token.buy({ from: owner, value: 100 });
+				await this.token.mint(this.token.address, 200e18, { from });
+				await this.token.buy({ from: owner, value: 200 });
 			});
 
 			it('allows to transfer when unpaused', async function () {
 
-				await this.token.transfer(recipient, 100, { from: owner });
+				await this.token.transfer(recipient, 200e18, { from: owner });
 
 				const senderBalance = await this.token.balanceOf(owner);
 				assert.equal(senderBalance, 0);
 
 				const recipientBalance = await this.token.balanceOf(recipient);
-				assert.equal(recipientBalance, 100);
+				assert.equal(recipientBalance, 200e18);
 			});
 
 			it('allows to transfer when paused and then unpaused', async function () {
 				await this.token.pause({ from: owner });
 				await this.token.unpause({ from: owner });
 
-				await this.token.transfer(recipient, 100, { from: owner });
+				await this.token.transfer(recipient, 200e18, { from: owner });
 
 				const senderBalance = await this.token.balanceOf(owner);
 				assert.equal(senderBalance, 0);
 
 				const recipientBalance = await this.token.balanceOf(recipient);
-				assert.equal(recipientBalance, 100);
+				assert.equal(recipientBalance, 200e18);
 			});
 
 			it('reverts when trying to transfer when paused', async function () {
@@ -193,32 +193,32 @@ contract('ERC20Extended_pausable', function ([_, owner, recipient, anotherAccoun
 		describe('transfer from', function () {
 			beforeEach(async function () {
 				await this.token.unpause({ from });
-				await this.token.mint(this.token.address, 100, { from });
-				await this.token.buy({ from: owner, value: 100 });
-				await this.token.approve(anotherAccount, 50, { from: owner });
+				await this.token.mint(this.token.address, 200e18, { from });
+				await this.token.buy({ from: owner, value: 200 });
+				await this.token.approve(anotherAccount, 50e18, { from: owner });
 			});
 
 			it('allows to transfer from when unpaused', async function () {
-				await this.token.transferFrom(owner, recipient, 40, { from: anotherAccount });
+				await this.token.transferFrom(owner, recipient, 40e18, { from: anotherAccount });
 
 				const senderBalance = await this.token.balanceOf(owner);
-				assert.equal(senderBalance, 60);
+				assert.equal(senderBalance, 160e18);
 
 				const recipientBalance = await this.token.balanceOf(recipient);
-				assert.equal(recipientBalance, 40);
+				assert.equal(recipientBalance, 40e18);
 			});
 
 			it('allows to transfer when paused and then unpaused', async function () {
 				await this.token.pause({ from: owner });
 				await this.token.unpause({ from: owner });
 
-				await this.token.transferFrom(owner, recipient, 40, { from: anotherAccount });
+				await this.token.transferFrom(owner, recipient, 40e18, { from: anotherAccount });
 
 				const senderBalance = await this.token.balanceOf(owner);
-				assert.equal(senderBalance, 60);
+				assert.equal(senderBalance, 160e18);
 
 				const recipientBalance = await this.token.balanceOf(recipient);
-				assert.equal(recipientBalance, 40);
+				assert.equal(recipientBalance, 40e18);
 			});
 
 			it('reverts when trying to transfer from when paused', async function () {

@@ -31,6 +31,11 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
 	uint8 public constant decimals = 18;
 
 	/**
+	* @dev Constant for the minimum allowed amount of tokens one can buy
+	*/
+	uint72 public constant MINIMUM_BUY_AMOUNT = 200e18;
+
+	/**
 	* @dev Auto-generated function that gets the price at which the token is sold.
 	* @return The sell price of the token.
 	*/
@@ -94,13 +99,14 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
 
 	/**
 	* @dev Send Ether to buy tokens at the current token sell price.
+	* @notice buy function has minimum allowed amount one can buy
 	*/
 	function buy() public payable whenNotPaused isWhitelisted(msg.sender) {
 		uint256 amount = msg.value.mul(1e18);
-
-		require(amount >= sellPrice, "Buy amount too small.");
-
+		
 		amount = amount.div(sellPrice);
+
+		require(amount >= MINIMUM_BUY_AMOUNT, "Buy amount too small");
 		
 		_transfer(this, msg.sender, amount);
 	}
@@ -145,7 +151,7 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
 	* @param _value The amount of Orbise Tokens to transfer.
 	* @return success True if operation is executed successfully.
 	*/
-	function nonEtherPurchaseTransfer(address _to, uint256 _value) public onlyBots whenNotPaused returns (bool success) {
+	function nonEtherPurchaseTransfer(address _to, uint256 _value) public isWhitelisted(_to) onlyBots whenNotPaused returns (bool success) {
 		return _transfer(msg.sender, _to, _value);
 	}
 }

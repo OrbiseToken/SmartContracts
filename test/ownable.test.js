@@ -11,7 +11,7 @@ contract('ERC20Extended_ownable', function ([owner, anotherAccount, otherAccount
 		const tokenStorage = await ERC20ExtendedData.new({ from: owner });
 		const ledger = await Ledger.new({ from: owner });
 		const whitelist = await WhitelistData.new({ from: owner });
-		const price = await web3.toWei('1', 'ether');
+		const price = 1;
 		this.token = await ERC20Extended.new(tokenStorage.address, ledger.address, whitelist.address, { from: owner });
 		await this.token.setPrices(price, price, { from: owner });
 		await tokenStorage.setContractAddress(this.token.address, { from: owner });

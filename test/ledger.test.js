@@ -8,7 +8,7 @@ contract('ERC20Extended_ledger', function ([owner]) {
 	beforeEach(async function () {
 		const tokenStorage = await ERC20ExtendedData.new({ from: owner });
 		this.ledger = await Ledger.new({ from: owner });
-		const price = await web3.toWei('1', 'ether');
+		const price = 1;
 		const whitelist = await WhitelistData.new({ from: owner });
 		this.token = await ERC20Extended.new(tokenStorage.address, this.ledger.address, whitelist.address, { from: owner });
 		await whitelist.addSingleCustomer(owner, '0xe9ce785086f5c3b748f71d481085ecfed6e8b27dde50ff827a68cda21a68abdb');
@@ -20,8 +20,8 @@ contract('ERC20Extended_ledger', function ([owner]) {
 	describe('ledger should allow past transactions to be accessed by index', function () {
 		beforeEach(async function () {
 			await this.token.unpause({ from: owner });
-			await this.token.mint(this.token.address, 100, { from: owner });
-			const { logs } = await this.token.buy({ from: owner, value: 100 });
+			await this.token.mint(this.token.address, 200e18, { from: owner });
+			const { logs } = await this.token.buy({ from: owner, value: 200 });
 			this.logs = logs;
 		})
 
