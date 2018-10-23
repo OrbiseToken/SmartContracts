@@ -2,6 +2,7 @@ const Ledger = artifacts.require("../contracts/ledger/Ledger.sol");
 const ERC20ExtendedData = artifacts.require("../contracts/erc20/data/ERC20ExtendedData.sol");
 const WhitelistData = artifacts.require("../contracts/whitelist/WhitelistData.sol");
 const ERC20Extended = artifacts.require("../contracts/erc20/ERC20Extended.sol");
+const Airdrop = artifacts.require("../contracts/airdrop/AirDrop.sol");
 
 module.exports = function (deployer) {
 	deployer.then(async function () {
@@ -15,5 +16,7 @@ module.exports = function (deployer) {
 		const whitelistInstance = await WhitelistData.deployed();
 
 		await deployer.deploy(ERC20Extended, ERC20DataInstance.address, ledgerInstance.address, whitelistInstance.address);
+
+		await deployer.deploy(Airdrop);
 	});
 };
