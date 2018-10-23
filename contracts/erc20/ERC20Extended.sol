@@ -106,7 +106,7 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
 		
 		amount = amount.div(sellPrice);
 
-		require(amount >= MINIMUM_BUY_AMOUNT, "Buy amount too small");
+		require(amount >= MINIMUM_BUY_AMOUNT, 'Buy amount too small');
 		
 		_transfer(this, msg.sender, amount);
 	}
@@ -118,7 +118,7 @@ contract ERC20Extended is FreezableToken, PausableToken, BurnableToken, Mintable
 	function sell(uint256 _amount) public whenNotPaused {
 		uint256 toBeTransferred = _amount.mul(buyPrice);
 
-		require(toBeTransferred >= 1e18, "Sell amount too small");
+		require(toBeTransferred >= 1e18, 'Sell amount too small');
 
 		toBeTransferred = toBeTransferred.div(1e18);
 
